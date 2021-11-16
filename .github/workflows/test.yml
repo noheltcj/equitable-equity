@@ -20,6 +20,6 @@ jobs:
     - name: Install packages
       run: npm install
     - name: Compile Solidity and Generate Typechain Bindings
-      run: npx compile
+      run: npx hardhat compile
     - name: Run tests
       run: npx hardhat test
