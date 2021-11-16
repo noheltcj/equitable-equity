@@ -1,7 +1,9 @@
 import { ethers } from "hardhat";
 
 async function main() {
-  const EquitableEquityDAO = await ethers.getContractFactory("EquitableEquityDAO");
+  const EquitableEquityDAO = await ethers.getContractFactory(
+    "EquitableEquityDAO"
+  );
   const dao = await EquitableEquityDAO.deploy();
 
   await dao.deployed();
