@@ -7,12 +7,12 @@ import { ethers } from "hardhat";
 
 async function main() {
   // We get the contract to deploy
-  const EquityDistributionToken = await ethers.getContractFactory("EquityDistributionToken");
-  const equitableEquityToken = await EquityDistributionToken.deploy("EquitableEquity LLC", "EEC");
+  const EquitableEquityDAO = await ethers.getContractFactory("EquitableEquityDAO");
+  const dao = await EquitableEquityDAO.deploy();
 
-  await equitableEquityToken.deployed();
+  await dao.deployed();
 
-  console.log("EquityDistributionToken deployed to:", equitableEquityToken.address);
+  console.log("DAO deployed to:", dao.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
