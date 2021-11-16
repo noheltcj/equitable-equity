@@ -1,4 +1,4 @@
-name: Test
+name: Lint
 
 on:
   push:
@@ -21,5 +21,5 @@ jobs:
       run: npm install
     - name: Compile Solidity and Generate Typechain Bindings
       run: npx compile
-    - name: Run tests
-      run: npx hardhat test
+    - name: Lint Solidity
+      run: npx solhint 'contracts/**/*.sol'
