@@ -1,6 +1,6 @@
 import { ethers } from "hardhat";
 import { Contract } from "ethers";
-import { EquitableEquityDAO } from "../../typechain";
+import { EquitableEquityDAO } from "../../../typechain/EquitableEquityDAO";
 
 class BlockchainClient {
   constructor() {}

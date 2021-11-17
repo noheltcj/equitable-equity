@@ -1,8 +1,10 @@
+import { ContractReceipt, ContractTransaction } from "@ethersproject/contracts";
 import { expect } from "chai";
-import { randomUUID } from "crypto";
+import { randomInt, randomUUID } from "crypto";
 import { ethers } from "hardhat";
 import { EquitableEquityDAO } from "../../typechain";
-import { daoClient } from "./clients";
+import { EquitableEquityProjectDAO } from "../../typechain/EquitableEquityProjectDAO";
+import { daoClient } from "./util/clients";
 
 describe("EquitableEquityDAO", function () {
   let dao: EquitableEquityDAO;
@@ -11,82 +13,94 @@ describe("EquitableEquityDAO", function () {
     dao = await daoClient.deploy();
   });
 
-  describe("#listProjects", function () {
-    describe("when no projects have been created", function () {
-      it("should have no projects available", async function () {
-        expect(await dao.listProjects()).to.be.empty;
-      });
-    });
-
-    describe("when a project has been created", function () {
-      let founderAddress: string;
-      let fakeProjectName: string;
-
-      beforeEach(async function () {
-        founderAddress = ethers.Wallet.createRandom().address;
-        fakeProjectName = randomUUID();
-
-        const token = await dao.createProject(
-          fakeProjectName,
-          "symbol",
-          founderAddress,
-          0
-        );
-        await token.wait();
-      });
-
-      it("should return the newly created project name", async function () {
-        const results = await dao.listProjects();
-
-        expect(results.length).to.equal(1);
-        expect(results).to.contain(fakeProjectName);
-      });
+  describe("given no projects have been created", function () {
+    it("should have no projects available", async function () {
+      expect(await dao.listProjects()).to.be.empty;
     });
   });
 
-  describe("#listMyProjects", function () {
-    let notFounderAddress: string;
+  describe("given a project has been created", function () {
+    let fakeProjectName: string;
+    let fakeTokenSymbol: string;
+    let fakeFounderAddress: string;
+    let fakeInitialFounderGrantAmount: number;
 
-    beforeEach(function () {
-      notFounderAddress = ethers.Wallet.createRandom().address;
+    beforeEach(async function () {
+      fakeFounderAddress = ethers.Wallet.createRandom().address;
+      fakeProjectName = randomUUID();
+      fakeTokenSymbol = randomUUID();
+      fakeInitialFounderGrantAmount = randomInt(10000);
+
+      await dao.createProject(
+        fakeProjectName,
+        fakeTokenSymbol,
+        fakeFounderAddress,
+        fakeInitialFounderGrantAmount
+      );
     });
 
-    describe("when no projects have been created", function () {
-      it("should not return any projects", async function () {
-        expect(await dao.listProjects()).to.be.empty;
-      });
+    it("should return the newly created project from #listProjects", async function () {
+      const results = await dao.listProjects();
+
+      expect(results.length).to.equal(1);
     });
 
-    describe("when a project has been created", function () {
-      let founderAddress: string;
-      let fakeProjectName: string;
+    describe("when a subsequent project is created", async function () {
+      let subsequentProjectName: string;
+      let subsequentTokenSymbol: string;
+      let subsequentFounderAddress: string;
+      let subsequentInitialFounderGrantAmount: number;
 
       beforeEach(async function () {
-        founderAddress = ethers.Wallet.createRandom().address;
-        fakeProjectName = randomUUID();
+        subsequentFounderAddress = ethers.Wallet.createRandom().address;
+        subsequentProjectName = randomUUID();
+        subsequentTokenSymbol = randomUUID();
+        subsequentInitialFounderGrantAmount = randomInt(10000);
+      });
 
-        const token = await dao.createProject(
-          fakeProjectName,
-          "symbol",
-          founderAddress,
-          0
+      it("should return the newly created project from #listProjects", async function () {
+        await dao.createProject(
+          subsequentProjectName,
+          subsequentTokenSymbol,
+          subsequentFounderAddress,
+          subsequentInitialFounderGrantAmount
         );
-        await token.wait();
+
+        const results = await dao.listProjects();
+
+        expect(results.length).to.equal(2);
       });
 
-      describe("when the requested user is not the founder", function () {
-        it("should not return any projects", async function () {
-          expect(await dao.listMyProjects(notFounderAddress)).to.be.empty;
-        });
+      it("should not allow an already used project name", async function () {
+        let errorResult: Error | undefined;
+        try {
+          await dao.createProject(
+            /** From the previous context */
+            fakeProjectName,
+            subsequentTokenSymbol,
+            subsequentTokenSymbol,
+            subsequentInitialFounderGrantAmount
+          );
+        } catch (error) {
+          errorResult = error as Error;
+        }
+        expect(errorResult?.message).to.not.equal(undefined);
       });
 
-      describe("when the requested user is the founder", function () {
-        it("should return the newly created project name", async function () {
-          const results = await dao.listMyProjects(founderAddress);
-
-          expect(results.length).to.equal(1);
-          expect(results).to.contain(fakeProjectName);
-        });
+      it("should not allow an already used token symbol", async function () {
+        let errorResult: Error | undefined;
+        try {
+          await dao.createProject(
+            subsequentProjectName,
+            /** From the previous context */
+            fakeTokenSymbol,
+            subsequentTokenSymbol,
+            subsequentInitialFounderGrantAmount
+          );
+        } catch (error) {
+          errorResult = error as Error;
+        }
+        expect(errorResult?.message).to.not.equal(undefined);
       });
     });
   });

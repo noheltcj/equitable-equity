@@ -2,6 +2,6 @@
 
 pragma solidity ^0.8.4;
 
-abstract contract Governor {
+abstract contract EquityGovernor {
     address public signature;
 }

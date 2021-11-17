@@ -10,23 +10,16 @@ async function main() {
     "0x0165878A594ca255338adfa4d48449f69242Eb8F"
   );
 
-  const createdProjectTokenAddress = await dao.createProject(
+  const createdProjectDAOAddress = await dao.createProject(
     "TestProject",
     "TST",
     dao.address,
     100
   );
 
-  const fetchedProjectTokenAddress = await dao.getAddressOfProjectToken(
-    "TestProject"
-  );
+  await createdProjectDAOAddress.wait();
 
-  console.log(
-    "created:",
-    createdProjectTokenAddress,
-    "\nfetched:",
-    fetchedProjectTokenAddress
-  );
+  console.log("created:", createdProjectDAOAddress.chainId);
 }
 
 main().catch((error) => {
