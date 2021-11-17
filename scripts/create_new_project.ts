@@ -21,12 +21,12 @@ async function main() {
     100
   );
 
-  const receipt = await createdProjectDAOAddress.wait()
+  const receipt = await createdProjectDAOAddress.wait();
 
-  const projects = await dao.listProjects()
-  console.log("Projects...", projects)
-  console.log("Using address...", receipt.contractAddress)
-  const projectDao = EquitableEquityProjectDAO.attach(receipt.contractAddress)
+  const projects = await dao.listProjects();
+  console.log("Projects...", projects);
+  console.log("Using address...", receipt.contractAddress);
+  const projectDao = EquitableEquityProjectDAO.attach(receipt.contractAddress);
   console.log("ORG NAME:", projectDao.organizationName);
 }
 
