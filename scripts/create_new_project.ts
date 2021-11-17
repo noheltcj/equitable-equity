@@ -5,28 +5,29 @@ async function main() {
     "EquitableEquityDAO"
   );
 
-  /** Will need to be updated with the address of any newly deployed DAOs. */
-  const dao = EquitableEquityDAO.attach(
-    "0x0165878A594ca255338adfa4d48449f69242Eb8F"
+  const EquitableEquityProjectDAO = await ethers.getContractFactory(
+    "EquitableEquityProjectDAO"
   );
 
-  const createdProjectTokenAddress = await dao.createProject(
-    "TestProject",
-    "TST",
-    dao.address,
+  /** Will need to be updated with the address of any newly deployed DAOs. */
+  const dao = EquitableEquityDAO.attach(
+    "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+  );
+
+  const createdProjectDAOAddress = await dao.createProject(
+    "Test Project 5",
+    "TST7",
+    "0xaDE9673b775B34c0EC2101d1Ac60fBBBCaB3FBc7",
     100
   );
 
-  const fetchedProjectTokenAddress = await dao.getAddressOfProjectToken(
-    "TestProject"
-  );
+  const receipt = await createdProjectDAOAddress.wait();
 
-  console.log(
-    "created:",
-    createdProjectTokenAddress,
-    "\nfetched:",
-    fetchedProjectTokenAddress
-  );
+  const projects = await dao.listProjects();
+  console.log("Projects...", projects);
+  console.log("Using address...", receipt.contractAddress);
+  const projectDao = EquitableEquityProjectDAO.attach(receipt.contractAddress);
+  console.log("ORG NAME:", projectDao.organizationName);
 }
 
 main().catch((error) => {
