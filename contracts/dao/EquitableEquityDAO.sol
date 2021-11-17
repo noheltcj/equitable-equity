@@ -13,13 +13,13 @@ contract EquitableEquityDAO is NetworkGovernor {
     /** Index by token symbol (starting at 1; not 0). */
     mapping(string => uint) private projectByTokenSymbolMapping;
 
-    address[] private projects;
+    EquitableEquityProjectDAO[] private projects;
 
     constructor() {
         signature = address(this);
     }
 
-    function listProjects() public view returns (address[] memory) {
+    function listProjects() public view returns (EquitableEquityProjectDAO[] memory) {
         return projects;
     }
 
@@ -28,21 +28,19 @@ contract EquitableEquityDAO is NetworkGovernor {
         string memory tokenSymbol,
         address payable foundingWalletAddress,
         uint64 initialGrantAmount
-    ) public returns (address) {
+    ) public returns (EquitableEquityProjectDAO) {
 
         /** When there's no element at the specified position, 0 will be returned. */
         require (projectByNameMapping[projectName] == 0, "Project name already taken");
         require (projectByTokenSymbolMapping[tokenSymbol] == 0, "Project symbol already taken");
 
         projects.push(
-            address(
-                new EquitableEquityProjectDAO(
-                    projectName,
-                    tokenSymbol,
-                    foundingWalletAddress,
-                    initialGrantAmount,
-                    this
-                )
+            new EquitableEquityProjectDAO(
+                projectName,
+                tokenSymbol,
+                foundingWalletAddress,
+                initialGrantAmount,
+                this
             )
         );
 
@@ -50,6 +48,6 @@ contract EquitableEquityDAO is NetworkGovernor {
         projectByNameMapping[projectName] = newProjectIndex;
         projectByTokenSymbolMapping[tokenSymbol] = newProjectIndex;
 
-        return address(projects[newProjectIndex - 1]);
+        return projects[newProjectIndex - 1];
     }
 }
