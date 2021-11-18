@@ -22,4 +22,4 @@ jobs:
     - name: Compile Solidity and Generate Typechain Bindings
       run: npx hardhat compile
     - name: Run tests
-      run: npx hardhat test
+      run: NODE_OPTIONS=--openssl-legacy-provider npx hardhat test
