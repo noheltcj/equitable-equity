@@ -18,7 +18,7 @@ jobs:
       with:
         node-version: '17'
     - name: Setup Environment
-    - run: export NODE_OPTIONS=--openssl-legacy-provider
+      run: export NODE_OPTIONS=--openssl-legacy-provider
     - name: Install packages
       run: npm install
     - name: Compile Solidity and Generate Typechain Bindings
