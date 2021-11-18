@@ -25,10 +25,7 @@ describe("EquitableEquityDAO - integration tests", function () {
       fakeFounderAddress = ethers.Wallet.createRandom().address;
       fakeProjectName = randomUUID();
 
-      await dao.createProject(
-        fakeProjectName,
-        fakeFounderAddress
-      );
+      await dao.createProject(fakeProjectName, fakeFounderAddress);
     });
 
     it("should return the newly created project from #listProjects", async function () {
@@ -63,7 +60,7 @@ describe("EquitableEquityDAO - integration tests", function () {
           await dao.createProject(
             /** From the previous context */
             fakeProjectName,
-            subsequentFounderAddress 
+            subsequentFounderAddress
           );
         } catch (error) {
           errorResult = error as Error;

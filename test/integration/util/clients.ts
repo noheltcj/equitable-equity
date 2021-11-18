@@ -32,7 +32,9 @@ export class DAOClient {
   }
 
   async deploy(contentUri: string): Promise<EquitableEquityDAO> {
-    return await blockchainClient.deployContract("EquitableEquityDAO", [contentUri]);
+    return await blockchainClient.deployContract("EquitableEquityDAO", [
+      contentUri,
+    ]);
   }
 }
 
