@@ -3,5 +3,10 @@
 pragma solidity ^0.8.4;
 
 abstract contract EquityGovernor {
-    address public signature;
+    function approveTransfer(
+        uint tokenId, 
+        address from, 
+        address to, 
+        uint amount
+    ) public virtual returns (bool);
 }

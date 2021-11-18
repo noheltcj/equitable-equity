@@ -10,43 +10,46 @@ contract EquitableEquityDAO is NetworkGovernor {
     /** Index by project name (starting at 1; not 0). */
     mapping(string => uint) private projectByNameMapping;
 
-    /** Index by token symbol (starting at 1; not 0). */
-    mapping(string => uint) private projectByTokenSymbolMapping;
+    string private contentUri;
 
     EquitableEquityProjectDAO[] private projects;
 
-    constructor() {
+    constructor(string memory initialContentUri) {
         signature = address(this);
+
+        contentUri = initialContentUri;
     }
 
     function listProjects() public view returns (EquitableEquityProjectDAO[] memory) {
         return projects;
     }
 
+    function projectByName(string memory name) public view returns (EquitableEquityProjectDAO) {
+        return projects[projectByNameMapping[name] - 1];
+    }
+
     function createProject(
         string memory projectName,
-        string memory tokenSymbol,
         address payable foundingWalletAddress,
         uint64 initialGrantAmount
     ) public returns (EquitableEquityProjectDAO) {
 
         /** When there's no element at the specified position, 0 will be returned. */
         require (projectByNameMapping[projectName] == 0, "Project name already taken");
-        require (projectByTokenSymbolMapping[tokenSymbol] == 0, "Project symbol already taken");
 
         projects.push(
             new EquitableEquityProjectDAO(
+                projects.length,
                 projectName,
-                tokenSymbol,
+                contentUri,
                 foundingWalletAddress,
                 initialGrantAmount,
-                this
+                address(this)
             )
         );
 
         uint newProjectIndex = projects.length;
         projectByNameMapping[projectName] = newProjectIndex;
-        projectByTokenSymbolMapping[tokenSymbol] = newProjectIndex;
 
         return projects[newProjectIndex - 1];
     }

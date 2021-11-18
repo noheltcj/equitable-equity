@@ -6,27 +6,51 @@ import { EquitableEquityToken } from "../token/EquitableEquityToken.sol";
 import { EquityGovernor } from "../governance/EquityGovernor.sol";
 import { NetworkGovernor } from "../governance/NetworkGovernor.sol";
 
+// TODO: Upgradability
 contract EquitableEquityProjectDAO is EquityGovernor {
     NetworkGovernor private networkGovernor;
     EquitableEquityToken private equityToken;
 
-    string public organizationName;
-    address[] public participants;
+    ProjectState private state;
 
     constructor(
+        uint projectId,
         string memory projectName,
-        string memory tokenSymbol,
-        address payable foundingWalletAddress,
+        string memory contentUri,
+        address payable founderAddress,
         uint initialGrantAmount,
-        NetworkGovernor networkGovernor_
+        address networkGovernor_
     ) {
-        // TODO: Validate name and symbol
+        networkGovernor = NetworkGovernor(networkGovernor_);
+        equityToken = new EquitableEquityToken(contentUri, address(this));
 
-        signature = address(this);
+        state = ProjectState(projectId, projectName, new address payable[](1));
+        state.participants.push(founderAddress);
 
-        networkGovernor = networkGovernor_;
-        equityToken = new EquitableEquityToken(projectName, tokenSymbol, this);
+        equityToken.grantEquity(founderAddress, initialGrantAmount);
+        equityToken.grantFoundingMemberNFT(founderAddress);
+    }
 
-        equityToken.grantEquity(foundingWalletAddress, initialGrantAmount);
+    function approveTransfer(
+        uint tokenId,
+        address from,
+        address to,
+        uint amount
+    ) override public pure returns (bool) {
+        return true;
+    }
+
+    function getProjectName() public view returns(string memory) {
+        return state.projectName;
+    }
+
+    function getParticipants() public view returns(address payable[] memory) {
+        return state.participants;
+    }
+
+    struct ProjectState {
+        uint projectId;
+        string projectName;
+        address payable[] participants;
     }
 }

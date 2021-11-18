@@ -8,7 +8,7 @@ describe("EquitableEquityDAO - integration tests", function () {
   let dao: EquitableEquityDAO;
 
   beforeEach(async function () {
-    dao = await daoClient.deploy();
+    dao = await daoClient.deploy("fake_content_uri");
   });
 
   it("should assign its own address as the governance signature", async function () {
@@ -23,19 +23,16 @@ describe("EquitableEquityDAO - integration tests", function () {
 
   describe("given a project has been created", function () {
     let fakeProjectName: string;
-    let fakeTokenSymbol: string;
     let fakeFounderAddress: string;
     let fakeInitialFounderGrantAmount: number;
 
     beforeEach(async function () {
       fakeFounderAddress = ethers.Wallet.createRandom().address;
       fakeProjectName = randomUUID();
-      fakeTokenSymbol = randomUUID();
       fakeInitialFounderGrantAmount = randomInt(10000);
 
       await dao.createProject(
         fakeProjectName,
-        fakeTokenSymbol,
         fakeFounderAddress,
         fakeInitialFounderGrantAmount
       );
@@ -49,21 +46,18 @@ describe("EquitableEquityDAO - integration tests", function () {
 
     describe("when a subsequent project is created", async function () {
       let subsequentProjectName: string;
-      let subsequentTokenSymbol: string;
       let subsequentFounderAddress: string;
       let subsequentInitialFounderGrantAmount: number;
 
       beforeEach(async function () {
         subsequentFounderAddress = ethers.Wallet.createRandom().address;
         subsequentProjectName = randomUUID();
-        subsequentTokenSymbol = randomUUID();
         subsequentInitialFounderGrantAmount = randomInt(10000);
       });
 
       it("should return the newly created project from #listProjects", async function () {
         await dao.createProject(
           subsequentProjectName,
-          subsequentTokenSymbol,
           subsequentFounderAddress,
           subsequentInitialFounderGrantAmount
         );
@@ -79,24 +73,7 @@ describe("EquitableEquityDAO - integration tests", function () {
           await dao.createProject(
             /** From the previous context */
             fakeProjectName,
-            subsequentTokenSymbol,
-            subsequentTokenSymbol,
-            subsequentInitialFounderGrantAmount
-          );
-        } catch (error) {
-          errorResult = error as Error;
-        }
-        expect(errorResult?.message).to.not.equal(undefined);
-      });
-
-      it("should not allow an already used token symbol", async function () {
-        let errorResult: Error | undefined;
-        try {
-          await dao.createProject(
-            subsequentProjectName,
-            /** From the previous context */
-            fakeTokenSymbol,
-            subsequentTokenSymbol,
+            subsequentFounderAddress,
             subsequentInitialFounderGrantAmount
           );
         } catch (error) {

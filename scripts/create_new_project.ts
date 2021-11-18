@@ -11,23 +11,31 @@ async function main() {
 
   /** Will need to be updated with the address of any newly deployed DAOs. */
   const dao = EquitableEquityDAO.attach(
-    "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+    "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9"
   );
 
-  const createdProjectDAOAddress = await dao.createProject(
-    "Test Project 5",
-    "TST7",
-    "0xaDE9673b775B34c0EC2101d1Ac60fBBBCaB3FBc7",
+  const projects = await dao.listProjects()
+
+  console.log("Available projects...", projects);
+
+  const projectName = "Test Project " + projects.length + 1
+
+  // Returns a transaction instead of the object we want since it mutates storage.
+  await dao.createProject(
+    projectName,
+    "TEST" + projects.length + 1,
+    "0xaDE9673b775B34c0EC2101d1Ac60fBBBCaB3FBc7", // My personal localhost eth address
     100
   );
 
-  const receipt = await createdProjectDAOAddress.wait();
+  // Using a view function from the blockchain will let us resolve the newly created project
+  const projectAddress = await dao.projectByName(projectName)
 
-  const projects = await dao.listProjects();
-  console.log("Projects...", projects);
-  console.log("Using address...", receipt.contractAddress);
-  const projectDao = EquitableEquityProjectDAO.attach(receipt.contractAddress);
-  console.log("ORG NAME:", projectDao.organizationName);
+  console.log("Attaching to new project:", projectAddress);
+  const projectDao = EquitableEquityProjectDAO.attach(projectAddress);
+
+  console.log("Project organization name:", await projectDao.organizationName());
+  // console.log("Project participants (should just be the founder for now):", await projectDao.participants())
 }
 
 main().catch((error) => {

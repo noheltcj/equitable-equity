@@ -31,8 +31,8 @@ export class DAOClient {
     this.blockchainClient = blockchainClient;
   }
 
-  async deploy(): Promise<EquitableEquityDAO> {
-    return await blockchainClient.deployContract("EquitableEquityDAO");
+  async deploy(contentUri: string): Promise<EquitableEquityDAO> {
+    return await blockchainClient.deployContract("EquitableEquityDAO", [contentUri]);
   }
 }
 
