@@ -17,11 +17,9 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: '17'
-    - name: Setup Environment
-      run: export NODE_OPTIONS=--openssl-legacy-provider
     - name: Install packages
       run: npm install
     - name: Compile Solidity and Generate Typechain Bindings
       run: npx hardhat compile
     - name: Run tests
-      run: npx hardhat test
+      run: NODE_OPTIONS=--openssl-legacy-provider npx hardhat test
