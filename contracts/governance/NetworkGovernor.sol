@@ -2,6 +2,4 @@
 
 pragma solidity ^0.8.4;
 
-abstract contract NetworkGovernor {
-    address public signature;
-}
+interface NetworkGovernor {}

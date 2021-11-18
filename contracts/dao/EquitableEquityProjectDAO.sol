@@ -2,6 +2,7 @@
 
 pragma solidity ^0.8.4;
 
+import { EquitableEquityDAO } from "../dao/EquitableEquityDAO.sol";
 import { EquitableEquityToken } from "../token/EquitableEquityToken.sol";
 import { EquityGovernor } from "../governance/EquityGovernor.sol";
 import { NetworkGovernor } from "../governance/NetworkGovernor.sol";
@@ -18,17 +19,21 @@ contract EquitableEquityProjectDAO is EquityGovernor {
         string memory projectName,
         string memory contentUri,
         address payable founderAddress,
-        uint initialGrantAmount,
-        address networkGovernor_
+        NetworkGovernor networkGovernor_
     ) {
-        networkGovernor = NetworkGovernor(networkGovernor_);
-        equityToken = new EquitableEquityToken(contentUri, address(this));
+        networkGovernor = networkGovernor_;
+        equityToken = new EquitableEquityToken(contentUri, this);
 
         state = ProjectState(projectId, projectName, new address payable[](1));
-        state.participants.push(founderAddress);
+        state.participants[0] = founderAddress;
+    }
 
-        equityToken.grantEquity(founderAddress, initialGrantAmount);
-        equityToken.grantFoundingMemberNFT(founderAddress);
+    function requestEquityGrant(address payable recipient, uint grantAmount) public {
+        equityToken.grantEquity(recipient, grantAmount);
+    }
+
+    function requestFounderStatus(address payable recipient) public {
+        equityToken.grantFoundingMemberNFT(recipient);
     }
 
     function approveTransfer(
@@ -36,7 +41,7 @@ contract EquitableEquityProjectDAO is EquityGovernor {
         address from,
         address to,
         uint amount
-    ) override public pure returns (bool) {
+    ) override public returns (bool) {
         return true;
     }
 

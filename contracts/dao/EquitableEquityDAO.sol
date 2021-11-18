@@ -15,8 +15,6 @@ contract EquitableEquityDAO is NetworkGovernor {
     EquitableEquityProjectDAO[] private projects;
 
     constructor(string memory initialContentUri) {
-        signature = address(this);
-
         contentUri = initialContentUri;
     }
 
@@ -30,8 +28,7 @@ contract EquitableEquityDAO is NetworkGovernor {
 
     function createProject(
         string memory projectName,
-        address payable foundingWalletAddress,
-        uint64 initialGrantAmount
+        address payable foundingWalletAddress
     ) public returns (EquitableEquityProjectDAO) {
 
         /** When there's no element at the specified position, 0 will be returned. */
@@ -43,8 +40,7 @@ contract EquitableEquityDAO is NetworkGovernor {
                 projectName,
                 contentUri,
                 foundingWalletAddress,
-                initialGrantAmount,
-                address(this)
+                this
             )
         );
 

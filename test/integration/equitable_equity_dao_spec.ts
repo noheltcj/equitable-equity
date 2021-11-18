@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { randomInt, randomUUID } from "crypto";
+import { randomUUID } from "crypto";
 import { ethers } from "hardhat";
 import { EquitableEquityDAO } from "../../typechain";
 import { daoClient } from "./util/clients";
@@ -11,10 +11,6 @@ describe("EquitableEquityDAO - integration tests", function () {
     dao = await daoClient.deploy("fake_content_uri");
   });
 
-  it("should assign its own address as the governance signature", async function () {
-    expect(await dao.signature()).to.equal(dao.address);
-  });
-
   describe("given no projects have been created", function () {
     it("should have no projects available", async function () {
       expect(await dao.listProjects()).to.be.empty;
@@ -24,17 +20,14 @@ describe("EquitableEquityDAO - integration tests", function () {
   describe("given a project has been created", function () {
     let fakeProjectName: string;
     let fakeFounderAddress: string;
-    let fakeInitialFounderGrantAmount: number;
 
     beforeEach(async function () {
       fakeFounderAddress = ethers.Wallet.createRandom().address;
       fakeProjectName = randomUUID();
-      fakeInitialFounderGrantAmount = randomInt(10000);
 
       await dao.createProject(
         fakeProjectName,
-        fakeFounderAddress,
-        fakeInitialFounderGrantAmount
+        fakeFounderAddress
       );
     });
 
@@ -47,19 +40,16 @@ describe("EquitableEquityDAO - integration tests", function () {
     describe("when a subsequent project is created", async function () {
       let subsequentProjectName: string;
       let subsequentFounderAddress: string;
-      let subsequentInitialFounderGrantAmount: number;
 
       beforeEach(async function () {
         subsequentFounderAddress = ethers.Wallet.createRandom().address;
         subsequentProjectName = randomUUID();
-        subsequentInitialFounderGrantAmount = randomInt(10000);
       });
 
       it("should return the newly created project from #listProjects", async function () {
         await dao.createProject(
           subsequentProjectName,
-          subsequentFounderAddress,
-          subsequentInitialFounderGrantAmount
+          subsequentFounderAddress
         );
 
         const results = await dao.listProjects();
@@ -73,8 +63,7 @@ describe("EquitableEquityDAO - integration tests", function () {
           await dao.createProject(
             /** From the previous context */
             fakeProjectName,
-            subsequentFounderAddress,
-            subsequentInitialFounderGrantAmount
+            subsequentFounderAddress 
           );
         } catch (error) {
           errorResult = error as Error;

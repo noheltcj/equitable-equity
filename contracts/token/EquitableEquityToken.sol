@@ -2,6 +2,7 @@
 
 pragma solidity ^0.8.4;
 
+import { EquitableEquityProjectDAO } from "../dao/EquitableEquityProjectDAO.sol";
 import { EquityGovernor } from "../governance/EquityGovernor.sol";
 import { ERC1155 } from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 
@@ -13,9 +14,9 @@ contract EquitableEquityToken is ERC1155 {
 
     constructor(
         string memory uri,
-        address equityGovernor_
-    ) ERC1155(uri) {
-        equityGovernor = EquityGovernor(equityGovernor_);
+        EquityGovernor equityGovernor_
+    ) ERC1155(string(uri)) {
+        equityGovernor = equityGovernor_;
     }
 
     /**

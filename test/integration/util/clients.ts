@@ -45,16 +45,12 @@ export class ProjectDAOClient {
 
   async deploy(
     projectName: string,
-    tokenSymbol: string,
     foundingWalletAddress: string,
-    initialGrantAmount: number,
     networkGovernor: NetworkGovernor
   ): Promise<EquitableEquityProjectDAO> {
     return await blockchainClient.deployContract("EquitableEquityProjectDAO", [
       projectName,
-      tokenSymbol,
       foundingWalletAddress,
-      initialGrantAmount,
       networkGovernor,
     ]);
   }
