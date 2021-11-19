@@ -2,7 +2,7 @@ import { ethers } from "hardhat";
 
 async function main() {
   /** My personal localhost eth address */
-  const founderAddress = "0xaDE9673b775B34c0EC2101d1Ac60fBBBCaB3FBc7";
+  const founderAddress = "0x02EACB83f63333d82a3985313Fd4B2117483f852";
 
   const EquitableEquityDAO = await ethers.getContractFactory(
     "EquitableEquityDAO"
@@ -14,7 +14,7 @@ async function main() {
 
   /** Will need to be updated with the address of any newly deployed DAOs. */
   const dao = EquitableEquityDAO.attach(
-    "0xD24705Df5d145A34067cAdf462590A5A4C515EC6"
+    "equitable-equity.eth"
   );
 
   const projects = await dao.listProjects();

@@ -5,10 +5,12 @@ pragma solidity ^0.8.4;
 import { EquitableEquityProjectDAO } from "../dao/EquitableEquityProjectDAO.sol";
 import { EquityGovernor } from "../governance/EquityGovernor.sol";
 import { ERC1155 } from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+import { ERC1155Supply } from "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 
-contract EquitableEquityToken is ERC1155 {
-    uint constant private EQUITY_TOKEN_ID = 0;
-    uint constant private FOUNDING_MEMBER_FT_ID = 1;
+contract EquitableEquityToken is ERC1155, ERC1155Supply {
+    uint256 constant private EQUITY_TOKEN_ID = 0;
+    /** To be replaced */
+    uint256 constant private FOUNDING_MEMBER_FT_ID = 1;
 
     EquityGovernor private equityGovernor;
 
@@ -46,7 +48,7 @@ contract EquitableEquityToken is ERC1155 {
         uint256[] memory ids,
         uint256[] memory amounts,
         bytes memory data
-    ) internal override {
+    ) internal override (ERC1155, ERC1155Supply) {
         requireSentByEquityGovernor(operator);
 
         /** 
@@ -61,7 +63,7 @@ contract EquitableEquityToken is ERC1155 {
         /** Not handling mint requests because it's internal. */
     }
 
-    function grantEquity(address payable recipient, uint amount) public {
+    function grantEquity(address payable recipient, uint256 amount) public {
         _mint(recipient, EQUITY_TOKEN_ID, amount, "");
     }
 

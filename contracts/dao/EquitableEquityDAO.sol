@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.4;
 
-import { EquitableEquityProjectDAO } from "../dao/EquitableEquityProjectDAO.sol";
+import { EquitableEquityProjectDAO } from "./EquitableEquityProjectDAO.sol";
 
 contract EquitableEquityDAO {
 
