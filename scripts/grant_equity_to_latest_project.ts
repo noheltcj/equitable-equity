@@ -36,7 +36,6 @@ async function main() {
   );
 
   await projectDao.requestEquityGrant(founderAddress, 100);
-  // await projectDao.requestFounderStatus(founderAddress);
 }
 
 main().catch((error) => {

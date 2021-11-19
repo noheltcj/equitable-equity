@@ -3,9 +3,8 @@
 pragma solidity ^0.8.4;
 
 import { EquitableEquityProjectDAO } from "../dao/EquitableEquityProjectDAO.sol";
-import { NetworkGovernor } from "../governance/NetworkGovernor.sol";
 
-contract EquitableEquityDAO is NetworkGovernor {
+contract EquitableEquityDAO {
 
     /** Index by project name (starting at 1; not 0). */
     mapping(string => uint) private projectByNameMapping;
@@ -39,8 +38,7 @@ contract EquitableEquityDAO is NetworkGovernor {
                 projects.length,
                 projectName,
                 contentUri,
-                foundingWalletAddress,
-                this
+                foundingWalletAddress
             )
         );
 

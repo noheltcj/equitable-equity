@@ -5,11 +5,9 @@ pragma solidity ^0.8.4;
 import { EquitableEquityDAO } from "../dao/EquitableEquityDAO.sol";
 import { EquitableEquityToken } from "../token/EquitableEquityToken.sol";
 import { EquityGovernor } from "../governance/EquityGovernor.sol";
-import { NetworkGovernor } from "../governance/NetworkGovernor.sol";
 
 // TODO: Upgradability
 contract EquitableEquityProjectDAO is EquityGovernor {
-    NetworkGovernor private networkGovernor;
     EquitableEquityToken private equityToken;
 
     ProjectState private state;
@@ -18,10 +16,8 @@ contract EquitableEquityProjectDAO is EquityGovernor {
         uint projectId,
         string memory projectName,
         string memory contentUri,
-        address payable founderAddress,
-        NetworkGovernor networkGovernor_
+        address payable founderAddress
     ) {
-        networkGovernor = networkGovernor_;
         equityToken = new EquitableEquityToken(contentUri, this);
 
         state = ProjectState(projectId, projectName, new address payable[](1));
