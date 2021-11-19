@@ -21,10 +21,7 @@ async function main() {
 
   console.log("Available projects...", projects);
 
-  const projectName = "Test Project " + (projects.length + 1);
-
-  // Returns a transaction instead of the object we want since it mutates storage.
-  const createProjectTx = await dao.createProject(projectName, founderAddress);
+  const projectName = "Test Project " + projects.length;
 
   // Using a view function from the blockchain will let us resolve the newly created project
   const projectAddress = await dao.projectByName(projectName);
@@ -39,7 +36,6 @@ async function main() {
   );
 
   await projectDao.requestEquityGrant(founderAddress, 100);
-  await projectDao.requestFounderStatus(founderAddress);
 }
 
 main().catch((error) => {

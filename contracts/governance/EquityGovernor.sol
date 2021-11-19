@@ -2,6 +2,11 @@
 
 pragma solidity ^0.8.4;
 
-abstract contract EquityGovernor {
-    address public signature;
+interface EquityGovernor {
+    function approveTransfer(
+        uint tokenId, 
+        address from, 
+        address to, 
+        uint amount
+    ) external returns (bool);
 }

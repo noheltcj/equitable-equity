@@ -2,31 +2,56 @@
 
 pragma solidity ^0.8.4;
 
+import { EquitableEquityDAO } from "../dao/EquitableEquityDAO.sol";
 import { EquitableEquityToken } from "../token/EquitableEquityToken.sol";
 import { EquityGovernor } from "../governance/EquityGovernor.sol";
-import { NetworkGovernor } from "../governance/NetworkGovernor.sol";
 
+// TODO: Upgradability
 contract EquitableEquityProjectDAO is EquityGovernor {
-    NetworkGovernor private networkGovernor;
     EquitableEquityToken private equityToken;
 
-    string public organizationName;
-    address[] public participants;
+    ProjectState private state;
 
     constructor(
+        uint projectId,
         string memory projectName,
-        string memory tokenSymbol,
-        address payable foundingWalletAddress,
-        uint initialGrantAmount,
-        NetworkGovernor networkGovernor_
+        string memory contentUri,
+        address payable founderAddress
     ) {
-        // TODO: Validate name and symbol
+        equityToken = new EquitableEquityToken(contentUri, this);
 
-        signature = address(this);
+        state = ProjectState(projectId, projectName, new address payable[](1));
+        state.participants[0] = founderAddress;
+    }
 
-        networkGovernor = networkGovernor_;
-        equityToken = new EquitableEquityToken(projectName, tokenSymbol, this);
+    function requestEquityGrant(address payable recipient, uint grantAmount) public {
+        equityToken.grantEquity(recipient, grantAmount);
+    }
 
-        equityToken.grantEquity(foundingWalletAddress, initialGrantAmount);
+    function requestFounderStatus(address payable recipient) public {
+        equityToken.grantFoundingMemberNFT(recipient);
+    }
+
+    function approveTransfer(
+        uint tokenId,
+        address from,
+        address to,
+        uint amount
+    ) override public returns (bool) {
+        return true;
+    }
+
+    function getProjectName() public view returns(string memory) {
+        return state.projectName;
+    }
+
+    function getParticipants() public view returns(address payable[] memory) {
+        return state.participants;
+    }
+
+    struct ProjectState {
+        uint projectId;
+        string projectName;
+        address payable[] participants;
     }
 }

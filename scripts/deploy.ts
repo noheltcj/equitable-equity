@@ -4,7 +4,7 @@ async function main() {
   const EquitableEquityDAO = await ethers.getContractFactory(
     "EquitableEquityDAO"
   );
-  const dao = await EquitableEquityDAO.deploy();
+  const dao = await EquitableEquityDAO.deploy("https://localhost:8000");
 
   await dao.deployed();
 
