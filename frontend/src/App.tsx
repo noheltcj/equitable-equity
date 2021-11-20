@@ -1,9 +1,9 @@
-import React, { Dispatch, ReactNode, Reducer, ReducerState, ReducerStateWithoutAction, useEffect, useReducer } from 'react';
+import React, { ReactNode, Reducer, ReducerState, ReducerStateWithoutAction, useEffect, useReducer } from 'react';
 import { Async } from './presentation/utils/Async'
 import './App.css';
-import { MetamaskButton } from './components/MetamaskButton';
 import { Address } from './model/Address';
 import AppEffectsService from './presentation/AppEffectsService';
+import { useEffectOnce } from './presentation/utils/Effects';
 
 export default class App extends React.Component<AppProps, AppState> {
   private effectsService = new AppEffectsService()
@@ -53,18 +53,15 @@ export default class App extends React.Component<AppProps, AppState> {
     return state
   }
 
-  reducer: (dispatch: Dispatch<AnyAppEvent>) => Reducer<AppState, AnyAppEvent> = (dispatch) => (state: AppState, event: AnyAppEvent): AppState => {
+  reducer: Reducer<AppState, AnyAppEvent> = (state: AppState, event: AnyAppEvent): AppState => {
     console.log("Processing event:", event)
 
     switch (event.type) {
       case 'on_ethereum_provider_effect_result':
-        event.payload.fold(
-          onUninitialized: () => { useEffect(this.effectsService.fetchEthereumProvider(dispatch)) },
-          onLoading: () => {},
-          onSucceeded: (data: unknown) => { useEffect(this.effectsService.observeNetworkChanges(data)) },
-          onFailed: (error: any) => {}
-        )
-        useEffect(this.effectsService.observeNetworkChanges(state.ethereum))
+        event.payload.fold({
+          onUninitialized: () => { useEffectOnce(this, this.effectsService.fetchEthereumProvider) },
+          onSuccess: (data: unknown) => { useEffectOnce(this, this.effectsService.observeNetworkChanges(data)) },
+        })
         return { 
           ethereum: event.payload,
           userAddress: state.userAddress
@@ -88,52 +85,8 @@ export default class App extends React.Component<AppProps, AppState> {
     )
 
     return (
-      <div className={styles.checkers.container}>
-          <div className={styles.checkers.board}>
-              <div className={styles.checkers.grid}>
-                  /* {
-                      /** 
-                       * Encoding used the range from 0 to 31 inclusive to represent all possible positions.
-                       */
-                      [...Array(32)].flatMap((_, encodedPosition: EncodedPosition) => {
-                          const occupant = localState.occupantsMap.get(encodedPosition)
-                          const decodedPosition = decodePosition(encodedPosition)
-                          const darkSquareOffset = decodedPosition.row % 2
-                          const isDarkFirst = darkSquareOffset == 0
-                          const squareOriginActual = encodedPosition * 2
-
-                          /** Expanded syntax for performance reasons. */
-                          if (isDarkFirst) {
-                              return [
-                                  <Square
-                                      key={squareOriginActual}
-                                      occupant={occupant}
-                                      isUsable={true}
-                                  />,
-                                  <Square
-                                      key={squareOriginActual + 1}
-                                      occupant={undefined}
-                                      isUsable={false}
-                                  />
-                              ]
-                          } else {
-                              return [
-                                  <Square
-                                      key={squareOriginActual}
-                                      occupant={undefined}
-                                      isUsable={false}
-                                  />,
-                                  <Square
-                                      key={squareOriginActual + 1}
-                                      occupant={occupant}
-                                      isUsable={true}
-                                  />
-                              ]
-                          }
-                      })
-                  } */
-              </div>
-          </div>
+      <div className="container">
+        <h1>HI</h1>
       </div>
     )
   }

@@ -1,12 +1,12 @@
 import { Dispatch, EffectCallback } from "react"
-import { AnyAppEvent, AppState, OnEthereumNetworkChangedEffectResult, OnEthereumProviderEffectResult } from "../App"
+import App, { AnyAppEvent, AppState, OnEthereumNetworkChangedEffectResult, OnEthereumProviderEffectResult } from "../App"
 
 import detectEthereumProvider from "@metamask/detect-provider";
 import { Async } from "./utils/Async";
-import { MonoEffect } from "./utils/Effects";
+import { MonoEffect, SimpleEffect } from "./utils/Effects";
 
 export default class AppEffectsService {
-    fetchEthereumProvider = (dispatch: Dispatch<OnEthereumProviderEffectResult>) => {
+    fetchEthereumProvider: SimpleEffect<OnEthereumProviderEffectResult> = (dispatch) => {
         // This function detects most providers injected at window.ethereum
         detectEthereumProvider({
             mustBeMetaMask: false, 

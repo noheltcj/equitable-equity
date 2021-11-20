@@ -1,6 +1,3 @@
-import { AsyncLocalStorage } from "async_hooks"
-import { error } from "console"
-
 /** 
  * Useful for representing asynchronous operations and possible results in application state. 
  */
@@ -34,34 +31,40 @@ export class Async<T, E> {
         }
     }
 
-    fold<R>(
-        onUninitialized: () => R,
-        onLoading: () => R,
-        onSuccess: (data: T) => R,
-        onFailure: (error: E) => R,
-    ): R {
+    fold({
+        onUninitialized = undefined,
+        onLoading = undefined,
+        onSuccess = undefined,
+        onFailure = undefined,
+    }: SyncFoldCallbacks<T, E, R>): R | undefined {
         switch (this.state) {
             case 'uninitialized':
-                return onUninitialized()
+                if (onUninitialized != undefined) {
+                    onUninitialized
+                }
+                break
             case 'loading':
-                return onLoading()
+                if (onLoading != undefined) {
+                    onLoading()
+                }
+                break
             case 'success':
-                return onSuccess(this.data!)
+                if (onSuccess != undefined) {
+                    onSuccess(this.data!)
+                }
+                break
             case 'failure':
-                if (this.error != undefined) {
-                    return onFailure(this.error)
+                if (this.error != undefined && onFailure != undefined) {
+                    onFailure(this.error)
                 } else {
-                    throw error("Invalid state; error should not be undefined")
+                    throw Error("Invalid state; error should not be undefined")
                 }
         }
     }
 
     successOrUndefined(): T | undefined {
         return this.fold(
-            () => undefined,
-            () => undefined,
-            (data: T) => data,
-            () => undefined
+            { onSuccess: (data: T) => data }
         )
     }
 
@@ -89,4 +92,11 @@ export class Async<T, E> {
     static uninitialized<T, E>(): Async<T, E> {
         return new Async<T, E>(undefined, 'uninitialized')
     }
+}
+
+interface SyncFoldCallbacks<T, E, R> {
+    onUninitialized?: (() => R) | undefined,
+    onLoading?: (() => R) | undefined,
+    onSuccess?: ((data: T) => R) | undefined,
+    onFailure?: ((error: E) => R) | undefined,
 }
