@@ -1,17 +1,20 @@
-import { AnyAppEvent, AppState, OnEthereumNetworkChangedEffectResult, OnEthereumProviderEffectResult, OnUserAddressChangedEffectResult } from "../App"
-import { Async } from "./utils/Async";
+import { AppState, OnEthereumNetworkChangedEffectResult, OnEthereumProviderEffectResult, OnUserAddressChangedEffectResult } from "../App"
+import { failure, loading, success, uninitialized } from "./utils/Async";
 import { MonoEffect, SimpleEffect } from "./utils/Effects";
 
 import detectEthereumProvider from "@metamask/detect-provider";
 import { ethers } from "ethers";
 import { Web3Provider } from "@ethersproject/providers";
 import { Dispatch } from "react";
+import { distinctUntilChanged } from "./utils/DispatchDecorators";
 
 export default class AppEffectsService {
     fetchEthereumProvider: SimpleEffect<OnEthereumProviderEffectResult> = (dispatch) => {
-        dispatch({
+        const dispatchOnlyNewStates = distinctUntilChanged(dispatch)
+
+        dispatchOnlyNewStates({
             type: 'on_ethereum_provider_fetch_effect_result',
-            payload: Async.loading()
+            payload: loading()
         })
 
         // This function detects most providers injected at window.ethereum
@@ -20,50 +23,54 @@ export default class AppEffectsService {
             silent: false,
             timeout: 3000
         }).then((result) => {
-            dispatch({ 
+            dispatchOnlyNewStates({ 
                 type: 'on_ethereum_provider_fetch_effect_result',
-                payload: Async.success(result) 
+                payload: success(result) 
             }) 
         }).catch((error) => {
-            dispatch({ 
+            dispatchOnlyNewStates({ 
                 type: 'on_ethereum_provider_fetch_effect_result',
-                payload: Async.failure(error) 
+                payload: failure(error) 
             })
         })
     
         return () => {
             /** Do cleanup of this. */
-            dispatch({ 
+            dispatchOnlyNewStates({ 
                 type: 'on_ethereum_provider_fetch_effect_result',
-                payload: Async.uninitialized()
+                payload: uninitialized()
             })
         }
     }
     
     observeNetworkChanges: MonoEffect<OnEthereumNetworkChangedEffectResult, AppState> = (state) => (dispatch) => {
+        const dispatchOnlyNewStates = distinctUntilChanged(dispatch)
+
         state.ethereum.fold({
             onSuccess: (ethereumProvider: unknown) => {
-                dispatch({
+                dispatchOnlyNewStates({
                     type: 'on_ethereum_network_changed_effect_result',
-                    payload: Async.loading()
+                    payload: loading()
                 })
             }
         })
 
         return () => {
-            dispatch({
+            dispatchOnlyNewStates({
                 type: 'on_ethereum_network_changed_effect_result',
-                payload: Async.uninitialized()
+                payload: uninitialized()
             })
         }
     }
 
     observeUserAddressChanges: MonoEffect<OnUserAddressChangedEffectResult, AppState> = (state) => (dispatch) => {
+        const dispatchOnlyNewStates = distinctUntilChanged(dispatch)
+
         state.ethereum.fold({
             onSuccess: (ethereumProvider: unknown) => {
-                dispatch({
+                dispatchOnlyNewStates({
                     type: 'on_user_address_changed_effect_result',
-                    payload: Async.loading()
+                    payload: loading()
                 })
             }
         })
@@ -83,16 +90,10 @@ export default class AppEffectsService {
     //   }
 
         return () => {
-            dispatch({
+            dispatchOnlyNewStates({
                 type: 'on_user_address_changed_effect_result',
-                payload: Async.uninitialized()
+                payload: uninitialized()
             })
-        }
-    }
-
-    private dispatchSafe<Data>(dispatch: Dispatch<Data>, oldData: Data, newData: Data) {
-        if (oldData != newData) {
-            dispatch(newData)
         }
     }
 }

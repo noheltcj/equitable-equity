@@ -1,9 +1,9 @@
-import React, { Reducer, useEffect, useReducer } from 'react';
-import { Async } from './presentation/utils/Async'
-import './App.css';
-import { Address } from './model/Address';
-import AppEffectsService from './presentation/AppEffectsService';
-import { Initializer, useEffectOnce } from './presentation/utils/Effects';
+import React, { Reducer, useEffect, useReducer } from 'react'
+import { Async, uninitialized } from './presentation/utils/Async'
+import './App.css'
+import { Address } from './model/Address'
+import AppEffectsService from './presentation/AppEffectsService'
+import { Initializer } from './presentation/utils/Effects'
 
 export default function App() {
   const effectsService = new AppEffectsService()
@@ -53,7 +53,7 @@ export default function App() {
     return state
   }
 
-  const Reducer: Reducer<AppState, AnyAppEvent> = (state: AppState, event: AnyAppEvent): AppState => {
+  const reducer: Reducer<AppState, AnyAppEvent> = (state: AppState, event: AnyAppEvent): AppState => {
     console.log("Processing event:", event)
 
     switch (event.type) {
@@ -79,11 +79,11 @@ export default function App() {
   }
 
   const [state, dispatch] = useReducer<Reducer<AppState, AnyAppEvent>, AppState>(
-    Reducer,
+    reducer,
     {
-      ethereum: Async.uninitialized(),
-      networkName: Async.uninitialized(),
-      userAddress: Async.uninitialized()
+      ethereum: uninitialized(),
+      networkName: uninitialized(),
+      userAddress: uninitialized()
     },
     init
   )
