@@ -1,9 +1,9 @@
-import { Component, Dispatch, EffectCallback, Reducer, ReducerState, useEffect } from "react";
+import { Component, Context, Dispatch, EffectCallback, Reducer, ReducerState, useEffect } from "react";
 
-export function useEffectOnce<Effect extends SimpleEffect<any>>(component: Component, effect: Effect) {
-    useEffect(effect(component.context.dispatch), [])
+export function useEffectOnce<Event, Effect extends SimpleEffect<Event>>(dispatch: Dispatch<Event>, effect: Effect) {
+    useEffect(effect(dispatch), [])
 }
 
-export type Initializer<State, Event> = (dispatch: Dispatch<Event>) => ReducerState<Reducer<State, Event>>
+export type Initializer<State> = (state: State) => State
 export type SimpleEffect<Event> = (dispatch: Dispatch<Event>) => EffectCallback
 export type MonoEffect<Event, D1> = (dependency: D1) => SimpleEffect<Event>

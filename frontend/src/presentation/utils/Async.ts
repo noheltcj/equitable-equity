@@ -31,7 +31,7 @@ export class Async<T, E> {
         }
     }
 
-    fold({
+    fold<R>({
         onUninitialized = undefined,
         onLoading = undefined,
         onSuccess = undefined,
@@ -40,22 +40,22 @@ export class Async<T, E> {
         switch (this.state) {
             case 'uninitialized':
                 if (onUninitialized != undefined) {
-                    onUninitialized
+                    return onUninitialized()
                 }
                 break
             case 'loading':
                 if (onLoading != undefined) {
-                    onLoading()
+                    return onLoading()
                 }
                 break
             case 'success':
                 if (onSuccess != undefined) {
-                    onSuccess(this.data!)
+                    return onSuccess(this.data!)
                 }
                 break
             case 'failure':
                 if (this.error != undefined && onFailure != undefined) {
-                    onFailure(this.error)
+                    return onFailure(this.error)
                 } else {
                     throw Error("Invalid state; error should not be undefined")
                 }
@@ -73,7 +73,7 @@ export class Async<T, E> {
         if (data != undefined) {
             return data
         } else {
-            throw error("Async expected to be in 'success' state, but was", this.state)
+            throw Error("Async expected to be in 'success' state, but was not")
         }
     }
 
