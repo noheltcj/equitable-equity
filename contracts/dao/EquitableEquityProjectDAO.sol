@@ -2,7 +2,6 @@
 
 pragma solidity ^0.8.10;
 
-import { EquitableEquityDAO } from "../dao/EquitableEquityDAO.sol";
 import { EquitableEquityToken } from "../token/EquitableEquityToken.sol";
 import { EquityGovernor } from "../governance/EquityGovernor.sol";
 import { ProjectVoteGovernor } from "../governance/ProjectVoteGovernor.sol";
