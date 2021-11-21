@@ -2,35 +2,56 @@
 
 pragma solidity ^0.8.4;
 
-import { Governor } from "@openzeppelin/contracts/governance/Governor.sol";
-import { GovernorCompatibilityBravo } from "@openzeppelin/contracts/governance/compatibility/GovernorCompatibilityBravo.sol";
-import { GovernorVotes } from "@openzeppelin/contracts/governance/extensions/GovernorVotes.sol";
-import { GovernorVotesQuorumFraction } from "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol";
-import { GovernorTimelockControl, TimelockController } from "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol";
+import "@openzeppelin/contracts/governance/Governor.sol";
+import "@openzeppelin/contracts/governance/compatibility/GovernorCompatibilityBravo.sol";
+import "@openzeppelin/contracts/governance/extensions/GovernorVotes.sol";
+import "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol";
+import "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol";
 
-abstract contract ProjectVoteGovernor is Governor, GovernorTimelockControl {
-
-    constructor(TimelockController _timelock)
-        Governor("Equitable Equity Governance")
+contract ProjectVoteGovernor is Governor, GovernorCompatibilityBravo, GovernorVotes, GovernorVotesQuorumFraction, GovernorTimelockControl {
+    constructor(ERC20Votes _token, TimelockController _timelock)
+        Governor("ProjectVoteGovernor")
+        GovernorVotes(_token)
+        GovernorVotesQuorumFraction(10)
         GovernorTimelockControl(_timelock)
     {}
 
-    /** Voting doesn't begin until the next block. */
     function votingDelay() public pure override returns (uint256) {
-        return 1;
+        return 1; // 1 block
     }
 
-    /** One minute voting period. */
     function votingPeriod() public pure override returns (uint256) {
-        return 5;
+        return 68; // 15 minutes
     }
-    
-    /** Below this are openzeppelin required overrides. */
+
+    function proposalThreshold() public pure override returns (uint256) {
+        return 0e18;
+    }
+
+    // The following functions are overrides required by Solidity.
+
+    function quorum(uint256 blockNumber)
+        public
+        view
+        override(IGovernor, GovernorVotesQuorumFraction)
+        returns (uint256)
+    {
+        return super.quorum(blockNumber);
+    }
+
+    function getVotes(address account, uint256 blockNumber)
+        public
+        view
+        override(IGovernor, GovernorVotes)
+        returns (uint256)
+    {
+        return super.getVotes(account, blockNumber);
+    }
 
     function state(uint256 proposalId)
         public
         view
-        override(Governor, GovernorTimelockControl)
+        override(Governor, IGovernor, GovernorTimelockControl)
         returns (ProposalState)
     {
         return super.state(proposalId);
@@ -38,7 +59,7 @@ abstract contract ProjectVoteGovernor is Governor, GovernorTimelockControl {
 
     function propose(address[] memory targets, uint256[] memory values, bytes[] memory calldatas, string memory description)
         public
-        override(Governor, IGovernor)
+        override(Governor, GovernorCompatibilityBravo, IGovernor)
         returns (uint256)
     {
         return super.propose(targets, values, calldatas, description);
@@ -71,13 +92,9 @@ abstract contract ProjectVoteGovernor is Governor, GovernorTimelockControl {
     function supportsInterface(bytes4 interfaceId)
         public
         view
-        override(Governor, GovernorTimelockControl)
+        override(Governor, IERC165, GovernorTimelockControl)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
-    }
-
-    function quorum(uint256 blockNumber) public view override returns (uint256) {
-
     }
 }

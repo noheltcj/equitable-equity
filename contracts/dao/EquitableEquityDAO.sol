@@ -3,8 +3,10 @@
 pragma solidity ^0.8.4;
 
 import { EquitableEquityProjectDAO } from "./EquitableEquityProjectDAO.sol";
+import { EquitableEquityToken } from "../token/EquitableEquityToken.sol";
+import { NetworkGovernor } from "../governance/NetworkGovernor.sol";
 
-contract EquitableEquityDAO {
+contract EquitableEquityDAO is NetworkGovernor {
 
     /** Index by project name (starting at 1; not 0). */
     mapping(string => uint) private projectByNameMapping;
@@ -13,6 +15,7 @@ contract EquitableEquityDAO {
 
     EquitableEquityProjectDAO[] private projects;
 
+    /** TODO: Governance vote to update */
     constructor(string memory initialContentUri) {
         contentUri = initialContentUri;
     }
@@ -27,21 +30,32 @@ contract EquitableEquityDAO {
 
     function createProject(
         string memory projectName,
+        string memory equityTokenName,
+        string memory equityTokenSymbol,
         address payable foundingWalletAddress
     ) public returns (EquitableEquityProjectDAO) {
 
         /** When there's no element at the specified position, 0 will be returned. */
         require (projectByNameMapping[projectName] == 0, "Project name already taken");
 
-        projects.push(
-            new EquitableEquityProjectDAO(
-                projects.length,
-                projectName,
-                contentUri,
-                foundingWalletAddress
-            )
+        EquitableEquityToken equityToken = new EquitableEquityToken(
+            this,
+            contentUri,
+            equityTokenName,
+            equityTokenSymbol
         );
 
+        EquitableEquityProjectDAO projectDAO = new EquitableEquityProjectDAO(
+            projects.length,
+            projectName,
+            equityToken,
+            foundingWalletAddress
+        );
+
+        equityToken.assignGovernor(projectDAO);
+                                            
+        projects.push(projectDAO);          
+                                            
         uint newProjectIndex = projects.length;
         projectByNameMapping[projectName] = newProjectIndex;
 

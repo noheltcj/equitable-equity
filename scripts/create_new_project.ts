@@ -24,7 +24,12 @@ async function main() {
   const projectName = "Test Project " + (projects.length + 1);
 
   // Returns a transaction instead of the object we want since it mutates storage.
-  const createProjectTx = await dao.createProject(projectName, founderAddress);
+  const createProjectTx = await dao.createProject(
+    projectName, 
+    projectName + " Token",
+    "TST" + projects.length + 1,
+    founderAddress
+  );
 
   // Using a view function from the blockchain will let us resolve the newly created project
   const projectAddress = await dao.projectByName(projectName);

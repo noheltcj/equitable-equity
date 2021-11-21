@@ -19,13 +19,17 @@ describe("EquitableEquityDAO - integration tests", function () {
 
   describe("given a project has been created", function () {
     let fakeProjectName: string;
+    let fakeTokenName: string;
+    let fakeTokenSymbol: string;
     let fakeFounderAddress: string;
 
     beforeEach(async function () {
       fakeFounderAddress = ethers.Wallet.createRandom().address;
       fakeProjectName = randomUUID();
+      fakeTokenName = randomUUID();
+      fakeTokenSymbol = randomUUID();
 
-      await dao.createProject(fakeProjectName, fakeFounderAddress);
+      await dao.createProject(fakeProjectName, fakeTokenName, fakeTokenSymbol, fakeFounderAddress);
     });
 
     it("should return the newly created project from #listProjects", async function () {
@@ -35,17 +39,23 @@ describe("EquitableEquityDAO - integration tests", function () {
     });
 
     describe("when a subsequent project is created", async function () {
-      let subsequentProjectName: string;
       let subsequentFounderAddress: string;
+      let subsequentProjectName: string;
+      let subsequentTokenName: string;
+      let subsequentTokenSymbol: string;
 
       beforeEach(async function () {
         subsequentFounderAddress = ethers.Wallet.createRandom().address;
         subsequentProjectName = randomUUID();
+        subsequentTokenName = randomUUID();
+        subsequentTokenSymbol = randomUUID();
       });
 
       it("should return the newly created project from #listProjects", async function () {
         await dao.createProject(
           subsequentProjectName,
+          subsequentTokenName,
+          subsequentTokenSymbol,
           subsequentFounderAddress
         );
 
@@ -60,6 +70,40 @@ describe("EquitableEquityDAO - integration tests", function () {
           await dao.createProject(
             /** From the previous context */
             fakeProjectName,
+            subsequentTokenName,
+            subsequentTokenSymbol,
+            subsequentFounderAddress
+          );
+        } catch (error) {
+          errorResult = error as Error;
+        }
+        expect(errorResult?.message).to.not.equal(undefined);
+      });
+
+      it("should not allow an already used token name", async function () {
+        let errorResult: Error | undefined;
+        try {
+          await dao.createProject(
+            subsequentProjectName,
+            /** From the previous context */
+            fakeTokenName,
+            subsequentTokenSymbol,
+            subsequentFounderAddress
+          );
+        } catch (error) {
+          errorResult = error as Error;
+        }
+        expect(errorResult?.message).to.not.equal(undefined);
+      });
+
+      it("should not allow an already used token symbol", async function () {
+        let errorResult: Error | undefined;
+        try {
+          await dao.createProject(
+            subsequentProjectName,
+            /** From the previous context */
+            fakeTokenName,
+            subsequentTokenSymbol,
             subsequentFounderAddress
           );
         } catch (error) {
