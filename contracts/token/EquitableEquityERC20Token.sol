@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: UNLICENSED
 
-pragma solidity ^0.8.10;
+pragma solidity ^0.8.4;
 
 import { EquityGovernor } from "../governance/EquityGovernor.sol";
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { ERC20Votes, ERC20Permit } from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 import { NetworkGovernor } from "../governance/NetworkGovernor.sol";
 
-contract EquitableEquityToken is ERC20, ERC20Votes {
+contract EquitableEquityERC20Token is ERC20, ERC20Votes {
     /** To be replaced with a more abstract system. */
     uint256 constant private FOUNDING_MEMBER_FT_ID = 0;
 
-    NetworkGovernor private networkGovernor;
     EquityGovernor private equityGovernor;
+    NetworkGovernor private networkGovernor;
 
     /** It's imperative that setEquityGovernor is called immediately after construction. */
     constructor(

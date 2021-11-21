@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
 
-pragma solidity ^0.8.10;
+pragma solidity ^0.8.4;
 
 import { EquitableEquityProjectDAO } from "./EquitableEquityProjectDAO.sol";
-import { EquitableEquityToken } from "../token/EquitableEquityToken.sol";
+import { EquitableEquityERC1155Token } from "../token/EquitableEquityERC1155Token.sol";
+import { EquitableEquityERC20Token } from "../token/EquitableEquityERC20Token.sol";
 import { NetworkGovernor } from "../governance/NetworkGovernor.sol";
 
 contract EquitableEquityDAO is NetworkGovernor {
@@ -32,28 +33,24 @@ contract EquitableEquityDAO is NetworkGovernor {
         string memory projectName,
         string memory equityTokenName,
         string memory equityTokenSymbol,
-        address payable foundingWalletAddress
+        address payable foundingWalletAddress,
+        uint256 initialGrantAmount
     ) public returns (EquitableEquityProjectDAO) {
 
         /** When there's no element at the specified position, 0 will be returned. */
         require (projectByNameMapping[projectName] == 0, "Project name already taken");
 
-        EquitableEquityToken equityToken = new EquitableEquityToken(
-            this,
-            contentUri,
-            equityTokenName,
-            equityTokenSymbol
-        );
-
         EquitableEquityProjectDAO projectDAO = new EquitableEquityProjectDAO(
             projects.length,
             projectName,
-            equityToken,
-            foundingWalletAddress
+            equityTokenName,
+            equityTokenSymbol,
+            contentUri,
+            foundingWalletAddress,
+            initialGrantAmount,
+            this
         );
 
-        equityToken.assignGovernor(projectDAO);
-                                            
         projects.push(projectDAO);          
                                             
         uint newProjectIndex = projects.length;

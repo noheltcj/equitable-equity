@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: UNLICENSED
 
-pragma solidity ^0.8.10;
+pragma solidity ^0.8.4;
 
 import { EquityGovernor } from "../governance/EquityGovernor.sol";
 import { ERC1155 } from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import { ERC1155Supply } from "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 import { NetworkGovernor } from "../governance/NetworkGovernor.sol";
 
-contract EquitableEquityToken is ERC1155, ERC1155Supply {
+contract EquitableEquityERC1155Token is ERC1155, ERC1155Supply {
     /** To be replaced with a more abstract system. */
     uint256 constant private FOUNDING_MEMBER_FT_ID = 0;
 
@@ -72,33 +72,7 @@ contract EquitableEquityToken is ERC1155, ERC1155Supply {
         /** Not handling mint and burn requests because they're internal. */
     }
 
-    /**
-     * @dev Snapshots the totalSupply after it has been increased.
-     */
-    function _mint(address account, uint256 amount) internal override(ERC20, ERC20Votes) {
-        super._mint(account, amount);
-    }
-
-    /**
-     * @dev Snapshots the totalSupply after it has been decreased.
-     */
-    function _burn(address account, uint256 amount) internal override(ERC20, ERC20Votes) {
-        super._burn(account, amount);
-    }
-
-    function assignGovernor(EquityGovernor governor) public {
-        requireSentByNetworkGovernor(_msgSender());
-
-        equityGovernor = governor;
-    }
-
-    function grantEquity(address payable recipient, uint256 amount) public {
-        requireSentByEquityGovernor(_msgSender());
-
-        _mint(recipient, amount);
-    }
-
-    function grantFoundingMemberNFT(address payable recipient) public {
+    function grantFoundingMemberFT(address payable recipient) public {
         _mint(recipient, FOUNDING_MEMBER_FT_ID, 1, "Founding Member");
     }
 

@@ -22,18 +22,21 @@ describe("EquitableEquityDAO - integration tests", function () {
     let fakeTokenName: string;
     let fakeTokenSymbol: string;
     let fakeFounderAddress: string;
+    let fakeInitialGrantAmount: number;
 
     beforeEach(async function () {
-      fakeFounderAddress = ethers.Wallet.createRandom().address;
       fakeProjectName = randomUUID();
       fakeTokenName = randomUUID();
       fakeTokenSymbol = randomUUID();
+      fakeFounderAddress = ethers.Wallet.createRandom().address;
+      fakeInitialGrantAmount = Math.abs(Math.random())
 
       await dao.createProject(
         fakeProjectName,
         fakeTokenName,
         fakeTokenSymbol,
-        fakeFounderAddress
+        fakeFounderAddress,
+        fakeInitialGrantAmount
       );
     });
 
@@ -44,16 +47,18 @@ describe("EquitableEquityDAO - integration tests", function () {
     });
 
     describe("when a subsequent project is created", async function () {
-      let subsequentFounderAddress: string;
       let subsequentProjectName: string;
       let subsequentTokenName: string;
       let subsequentTokenSymbol: string;
+      let subsequentFounderAddress: string;
+      let subsequentInitialGrantAmount: number; 
 
       beforeEach(async function () {
         subsequentFounderAddress = ethers.Wallet.createRandom().address;
         subsequentProjectName = randomUUID();
         subsequentTokenName = randomUUID();
         subsequentTokenSymbol = randomUUID();
+        subsequentInitialGrantAmount = Math.abs(Math.random());
       });
 
       it("should return the newly created project from #listProjects", async function () {
@@ -61,7 +66,8 @@ describe("EquitableEquityDAO - integration tests", function () {
           subsequentProjectName,
           subsequentTokenName,
           subsequentTokenSymbol,
-          subsequentFounderAddress
+          subsequentFounderAddress,
+          subsequentInitialGrantAmount
         );
 
         const results = await dao.listProjects();
@@ -77,7 +83,8 @@ describe("EquitableEquityDAO - integration tests", function () {
             fakeProjectName,
             subsequentTokenName,
             subsequentTokenSymbol,
-            subsequentFounderAddress
+            subsequentFounderAddress,
+            subsequentInitialGrantAmount
           );
         } catch (error) {
           errorResult = error as Error;
@@ -93,7 +100,8 @@ describe("EquitableEquityDAO - integration tests", function () {
             /** From the previous context */
             fakeTokenName,
             subsequentTokenSymbol,
-            subsequentFounderAddress
+            subsequentFounderAddress,
+            subsequentInitialGrantAmount
           );
         } catch (error) {
           errorResult = error as Error;
@@ -109,7 +117,8 @@ describe("EquitableEquityDAO - integration tests", function () {
             subsequentTokenName,
             /** From the previous context */
             fakeTokenSymbol,
-            subsequentFounderAddress
+            subsequentFounderAddress,
+            subsequentInitialGrantAmount
           );
         } catch (error) {
           errorResult = error as Error;
