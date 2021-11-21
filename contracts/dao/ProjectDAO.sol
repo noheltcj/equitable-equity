@@ -31,7 +31,6 @@ contract ProjectDAO is EquityGovernor {
 
         erc1155Token = new ERC1155Token(
             this,
-            networkGovernor,
             erc1155TokenContentUri
         );
 
@@ -50,23 +49,6 @@ contract ProjectDAO is EquityGovernor {
         projectState = ProjectState(projectId, projectName, new address payable[](1));
         projectState.participants[0] = founderAddress;
     } 
-
-    function approveEquityTransfer(
-        address from,
-        address to,
-        uint amount
-    ) override(EquityGovernor) public pure returns (bool) {
-        return true;
-    }
-
-    function approveTokenTransfer(
-        uint tokenId,
-        address from,
-        address to,
-        uint amount
-    ) override(EquityGovernor) public pure returns (bool) {
-        return true;
-    }
 
     function requestEquityGrant(address payable recipient, uint grantAmount) external {
         erc20Token.grantEquity(recipient, grantAmount);

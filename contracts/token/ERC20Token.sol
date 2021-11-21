@@ -27,73 +27,21 @@ contract ERC20Token is ERC20, ERC20Votes {
         networkGovernor = _networkGovernor;
     }
 
-    /**
-     * @dev Hook that is called before any transfer of tokens. This includes
-     * minting and burning.
-     *
-     * Calling conditions:
-     *
-     * - when `from` and `to` are both non-zero, `amount` of ``from``'s tokens
-     * will be transferred to `to`.
-     * - when `from` is zero, `amount` tokens will be minted for `to`.
-     * - when `to` is zero, `amount` of ``from``'s tokens will be burned.
-     * - `from` and `to` are never both zero.
-     *
-     * To learn more about hooks, head to xref:ROOT:extending-contracts.adoc#using-hooks[Using Hooks].
-     */
-    function _beforeTokenTransfer(
-        address from,
-        address to,
-        uint256 amount
-    ) internal override {
-        super._beforeTokenTransfer(from, to, amount);
-
-        /** 
-         * - when `from` and `to` are both non-zero, `amount` of ``from``'s tokens
-         * will be transferred to `to`.
-         */
-        if (to != address(0) && to != address(0)) {
-            require(equityGovernor.approveEquityTransfer(from, to, amount), "Transaction not approved");
-        }
-
-        /** Not handling mint and burn requests because they're internal. */
-    }
-
     function _afterTokenTransfer(address from, address to, uint256 amount) internal override(ERC20, ERC20Votes) {
         super._afterTokenTransfer(from, to, amount);
     }
 
-    /**
-     * @dev Snapshots the totalSupply after it has been increased.
-     */
     function _mint(address account, uint256 amount) internal override(ERC20, ERC20Votes) {
         super._mint(account, amount);
     }
 
-    /**
-     * @dev Snapshots the totalSupply after it has been decreased.
-     */
     function _burn(address account, uint256 amount) internal override(ERC20, ERC20Votes) {
         super._burn(account, amount);
     }
 
-    function reassignGovernor(EquityGovernor governor) public {
-        requireSentByNetworkGovernor(_msgSender());
-
-        equityGovernor = governor;
-    }
-
     function grantEquity(address payable recipient, uint256 amount) public {
-        requireSentByEquityGovernor(_msgSender());
+        require(_msgSender() == address(equityGovernor), "403");
 
         _mint(recipient, amount);
-    }
-
-    function requireSentByNetworkGovernor(address operator) internal view {
-        require(operator == address(networkGovernor), "Not authorized");
-    }
-
-    function requireSentByEquityGovernor(address operator) internal view {
-        require(operator == address(equityGovernor), "Not authorized");
     }
 }

@@ -20,24 +20,4 @@ contract ProjectVoteGovernor is Governor, GovernorCountingSimple, GovernorVotes,
     function votingPeriod() public pure override returns (uint256) {
         return 68; // 15 minutes
     }
-
-    // The following functions are overrides required by Solidity.
-
-    function quorum(uint256 blockNumber)
-        public
-        view
-        override(IGovernor, GovernorVotesQuorumFraction)
-        returns (uint256)
-    {
-        return super.quorum(blockNumber);
-    }
-
-    function getVotes(address account, uint256 blockNumber)
-        public
-        view
-        override(IGovernor, GovernorVotes)
-        returns (uint256)
-    {
-        return super.getVotes(account, blockNumber);
-    }
 }
