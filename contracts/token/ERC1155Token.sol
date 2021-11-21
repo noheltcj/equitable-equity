@@ -7,7 +7,7 @@ import { ERC1155 } from "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import { ERC1155Supply } from "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 import { NetworkGovernor } from "../governance/NetworkGovernor.sol";
 
-contract EquitableEquityERC1155Token is ERC1155, ERC1155Supply {
+contract ERC1155Token is ERC1155, ERC1155Supply {
     /** To be replaced with a more abstract system. */
     uint256 constant private FOUNDING_MEMBER_FT_ID = 0;
 
@@ -51,9 +51,7 @@ contract EquitableEquityERC1155Token is ERC1155, ERC1155Supply {
         uint256[] memory amounts,
         bytes memory data
     ) internal override (ERC1155, ERC1155Supply) {
-        super._beforeTokenTransfer(
-            operator,
-            from,
+        super._beforeTokenTransfer(operator, from,
             to,
             ids,
             amounts,
@@ -66,21 +64,21 @@ contract EquitableEquityERC1155Token is ERC1155, ERC1155Supply {
          */
         if (to != address(0) && to != address(0)) {
             for (uint i = 0; i < ids.length; i++) {
-                require(equityGovernor.approveTokenTransfer(ids[i], from, to, amounts[i]), "Transaction not approved");
+                require(equityGovernor.approveTokenTransfer(ids[i], from, to, amounts[i]), "403");
             }
         }
         /** Not handling mint and burn requests because they're internal. */
     }
 
     function grantFoundingMemberFT(address payable recipient) public {
-        _mint(recipient, FOUNDING_MEMBER_FT_ID, 1, "Founding Member");
+        _mint(recipient, FOUNDING_MEMBER_FT_ID, 1, "");
     }
 
     function requireSentByNetworkGovernor(address operator) private view {
-        require(operator == address(networkGovernor), "Not authorized");
+        require(operator == address(networkGovernor), "403");
     }
 
     function requireSentByEquityGovernor(address operator) private view {
-        require(operator == address(equityGovernor), "Not authorized");
+        require(operator == address(equityGovernor), "403");
     }
 }

@@ -7,9 +7,9 @@ import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { ERC20Votes, ERC20Permit } from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 import { NetworkGovernor } from "../governance/NetworkGovernor.sol";
 
-contract EquitableEquityERC20Token is ERC20, ERC20Votes {
+contract ERC20Token is ERC20, ERC20Votes {
     /** To be replaced with a more abstract system. */
-    uint256 constant internal FOUNDING_MEMBER_FT_ID = 0;
+    uint32 constant internal FOUNDING_MEMBER_FT_ID = 0;
 
     EquityGovernor internal equityGovernor;
     NetworkGovernor internal networkGovernor;

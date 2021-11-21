@@ -2,28 +2,28 @@
 
 pragma solidity ^0.8.6;
 
-import { EquitableEquityProjectDAO } from "./EquitableEquityProjectDAO.sol";
+import { ProjectDAO } from "./ProjectDAO.sol";
 import { NetworkGovernor } from "../governance/NetworkGovernor.sol";
 
-contract EquitableEquityDAO is NetworkGovernor {
+contract DAO is NetworkGovernor {
 
     /** Index by project name (starting at 1; not 0). */
     mapping(string => uint) private projectByNameMapping;
 
     string private contentUri;
 
-    EquitableEquityProjectDAO[] private projects;
+    ProjectDAO[] private projects;
 
     /** TODO: Governance vote to update */
     constructor(string memory initialContentUri) {
         contentUri = initialContentUri;
     }
 
-    function listProjects() public view returns (EquitableEquityProjectDAO[] memory) {
+    function listProjects() public view returns (ProjectDAO[] memory) {
         return projects;
     }
 
-    function projectByName(string memory name) public view returns (EquitableEquityProjectDAO) {
+    function projectByName(string memory name) public view returns (ProjectDAO) {
         return projects[projectByNameMapping[name] - 1];
     }
 
@@ -33,12 +33,12 @@ contract EquitableEquityDAO is NetworkGovernor {
         string memory equityTokenSymbol,
         address payable foundingWalletAddress,
         uint256 initialGrantAmount
-    ) public returns (EquitableEquityProjectDAO) {
+    ) external returns (ProjectDAO) {
 
         /** When there's no element at the specified position, 0 will be returned. */
         require (projectByNameMapping[projectName] == 0, "Project name already taken");
 
-        EquitableEquityProjectDAO projectDAO = new EquitableEquityProjectDAO(
+        ProjectDAO projectDAO = new ProjectDAO(
             projects.length,
             projectName,
             equityTokenName,

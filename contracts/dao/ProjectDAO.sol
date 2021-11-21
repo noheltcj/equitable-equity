@@ -2,15 +2,15 @@
 
 pragma solidity ^0.8.6;
 
-import { EquitableEquityERC1155Token } from "../token/EquitableEquityERC1155Token.sol";
-import { EquitableEquityERC20Token } from "../token/EquitableEquityERC20Token.sol";
+import { ERC1155Token } from "../token/ERC1155Token.sol";
+import { ERC20Token } from "../token/ERC20Token.sol";
 import { EquityGovernor } from "../governance/EquityGovernor.sol";
 import { NetworkGovernor } from "../governance/NetworkGovernor.sol";
 import { ProjectVoteGovernor } from "../governance/ProjectVoteGovernor.sol";
 
-contract EquitableEquityProjectDAO is EquityGovernor {
-    EquitableEquityERC1155Token internal erc1155Token;
-    EquitableEquityERC20Token internal erc20Token;
+contract ProjectDAO is EquityGovernor {
+    ERC1155Token internal erc1155Token;
+    ERC20Token internal erc20Token;
 
     NetworkGovernor internal networkGovernor;
     ProjectVoteGovernor internal projectVoteGovernor;
@@ -29,13 +29,13 @@ contract EquitableEquityProjectDAO is EquityGovernor {
     ) {
         networkGovernor = _networkGovernor;
 
-        erc1155Token = new EquitableEquityERC1155Token(
+        erc1155Token = new ERC1155Token(
             this,
             networkGovernor,
             erc1155TokenContentUri
         );
 
-        erc20Token = new EquitableEquityERC20Token(
+        erc20Token = new ERC20Token(
             this,
             networkGovernor,
             equityTokenName,
