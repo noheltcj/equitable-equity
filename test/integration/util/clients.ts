@@ -50,7 +50,7 @@ export class ProjectDAOClient {
   ): Promise<EquitableEquityProjectDAO> {
     return await blockchainClient.deployContract("EquitableEquityProjectDAO", [
       projectName,
-      foundingWalletAddress
+      foundingWalletAddress,
     ]);
   }
 }

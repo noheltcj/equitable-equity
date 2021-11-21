@@ -13,9 +13,7 @@ async function main() {
   );
 
   /** Will need to be updated with the address of any newly deployed DAOs. */
-  const dao = EquitableEquityDAO.attach(
-    "equitable-equity.eth"
-  );
+  const dao = EquitableEquityDAO.attach("equitable-equity.eth");
 
   const projects = await dao.listProjects();
 

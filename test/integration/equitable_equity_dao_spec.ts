@@ -29,7 +29,12 @@ describe("EquitableEquityDAO - integration tests", function () {
       fakeTokenName = randomUUID();
       fakeTokenSymbol = randomUUID();
 
-      await dao.createProject(fakeProjectName, fakeTokenName, fakeTokenSymbol, fakeFounderAddress);
+      await dao.createProject(
+        fakeProjectName,
+        fakeTokenName,
+        fakeTokenSymbol,
+        fakeFounderAddress
+      );
     });
 
     it("should return the newly created project from #listProjects", async function () {

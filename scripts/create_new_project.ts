@@ -25,7 +25,7 @@ async function main() {
 
   // Returns a transaction instead of the object we want since it mutates storage.
   const createProjectTx = await dao.createProject(
-    projectName, 
+    projectName,
     projectName + " Token",
     "TST" + projects.length + 1,
     founderAddress
