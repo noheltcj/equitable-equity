@@ -29,7 +29,7 @@ describe("DAO - integration tests", function () {
       fakeTokenName = randomUUID();
       fakeTokenSymbol = randomUUID();
       fakeFounderAddress = ethers.Wallet.createRandom().address;
-      fakeInitialGrantAmount = Math.floor(Math.abs(Math.random()) * 1000)
+      fakeInitialGrantAmount = Math.floor(Math.abs(Math.random()) * 1000);
 
       await dao.createProject(
         fakeProjectName,
@@ -51,14 +51,16 @@ describe("DAO - integration tests", function () {
       let subsequentTokenName: string;
       let subsequentTokenSymbol: string;
       let subsequentFounderAddress: string;
-      let subsequentInitialGrantAmount: number; 
+      let subsequentInitialGrantAmount: number;
 
       beforeEach(async function () {
         subsequentFounderAddress = ethers.Wallet.createRandom().address;
         subsequentProjectName = randomUUID();
         subsequentTokenName = randomUUID();
         subsequentTokenSymbol = randomUUID();
-        subsequentInitialGrantAmount = Math.floor(Math.abs(Math.random()) * 1000);
+        subsequentInitialGrantAmount = Math.floor(
+          Math.abs(Math.random()) * 1000
+        );
       });
 
       it("should return the newly created project from #listProjects", async function () {

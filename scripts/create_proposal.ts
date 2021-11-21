@@ -10,7 +10,7 @@ async function main() {
   const ProjectDAO = await ethers.getContractFactory("ProjectDAO");
 
   /** Will need to be updated with the address of any newly deployed DAOs. */
-//   const dao = DAO.attach("equitable-equity.eth");
+  //   const dao = DAO.attach("equitable-equity.eth");
   const dao = DAO.attach("0x0250aDe798e703AA0a75E5b9f72ffe9AA40134C7");
 
   const projects = await dao.listProjects();
@@ -33,17 +33,25 @@ async function main() {
   );
 
   // Insert the token address.
-  const token = await ethers.getContractAt("ERC20Token", await projectDao.getERC20Token());
-  const governorAddress = await projectDao.getGovernor()
-  const GovernorFactory = await ethers.getContractFactory("ProjectVoteGovernor")
-  const governor = GovernorFactory.attach(governorAddress)
+  const token = await ethers.getContractAt(
+    "ERC20Token",
+    await projectDao.getERC20Token()
+  );
+  const governorAddress = await projectDao.getGovernor();
+  const GovernorFactory = await ethers.getContractFactory(
+    "ProjectVoteGovernor"
+  );
+  const governor = GovernorFactory.attach(governorAddress);
 
-  const transferCalldata = token.interface.encodeFunctionData("grantEquity", [recipient, 1000]);
+  const transferCalldata = token.interface.encodeFunctionData("grantEquity", [
+    recipient,
+    1000,
+  ]);
   await governor.propose(
     [token.address],
     [0],
     [transferCalldata],
-    "Proposal #1: I want moar tokenz",
+    "Proposal #1: I want moar tokenz"
   );
 }
 

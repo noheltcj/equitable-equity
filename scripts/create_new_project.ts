@@ -4,14 +4,9 @@ async function main() {
   /** My personal localhost eth address */
   const founderAddress = "0xaDE9673b775B34c0EC2101d1Ac60fBBBCaB3FBc7";
 
-  const DAO = await ethers.getContractFactory(
-    "DAO"
-  );
+  const DAO = await ethers.getContractFactory("DAO");
 
-  const ProjectDAO = await ethers.getContractFactory(
-    "ProjectDAO"
-  );
-
+  const ProjectDAO = await ethers.getContractFactory("ProjectDAO");
 
   // const dao = DAO.attach("equitable-equity.eth");
   const dao = DAO.attach("0x0250aDe798e703AA0a75E5b9f72ffe9AA40134C7");
