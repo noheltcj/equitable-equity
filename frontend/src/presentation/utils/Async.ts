@@ -4,100 +4,94 @@
 
 export type AsyncState = 'uninitialized' | 'loading' | 'success' | 'failure'
 
-function constructInternal<T, E>(
-    result: T | E | undefined = undefined,
-    state: AsyncState
-): Async<T, E> {
-    var data = undefined
-    var error = undefined
+export class Async<T, E> { 
+    data: T | undefined
+    error: E | undefined
     
-    switch (state) {
-        case 'uninitialized':
-        case 'loading':
-            break
-        case 'success':
-            data = result as T
-            break
-        case 'failure':
-            error = result as E
-            break
-    }
+    state: AsyncState
 
-    return {
-        data: data,
-        error: error,
-        state: state,
-        fold<R>({
-            onUninitialized = undefined,
-            onLoading = undefined,
-            onSuccess = undefined,
-            onFailure = undefined,
-        }: SyncFoldCallbacks<T, E, R>): R | undefined {
-            switch (this.state) {
-                case 'uninitialized':
-                    if (onUninitialized !== undefined) {
-                        return onUninitialized()
-                    }
-                    break
-                case 'loading':
-                    if (onLoading !== undefined) {
-                        return onLoading()
-                    }
-                    break
-                case 'success':
-                    if (onSuccess !== undefined) {
-                        return onSuccess(this.data!)
-                    }
-                    break
-                case 'failure':
-                    if (this.error !== undefined && onFailure !== undefined) {
-                        return onFailure(this.error)
-                    } else {
-                        throw Error("Invalid state; error should not be undefined")
-                    }
-            }
-        },
-        successOrUndefined(): T | undefined {
-            return this.fold(
-                { onSuccess: (data: T) => data }
-            )
-        },
-        requireSuccess(): T {
-            const data = this.successOrUndefined()
-            if (data !== undefined) {
-                return data
-            } else {
-                throw Error("Async expected to be in 'success' state, but was not")
-            }
+    private constructor(
+        result: T | E | undefined = undefined,
+        state: AsyncState
+    ) {
+        this.data = undefined
+        this.error = undefined
+        this.state = state
+        
+        switch (this.state) {
+            case 'uninitialized':
+            case 'loading':
+                break
+            case 'success':
+                this.data = result as T
+                break
+            case 'failure':
+                this.error = result as E
+                break
         }
     }
-}
 
-export function success<T, E>(data: T): Async<T, E> {
-    return constructInternal<T, E>(data, 'success')
-}
+    fold<R>({
+        onUninitialized = undefined,
+        onLoading = undefined,
+        onSuccess = undefined,
+        onFailure = undefined,
+    }: SyncFoldCallbacks<T, E, R>): R | undefined {
+        switch (this.state) {
+            case 'uninitialized':
+                if (onUninitialized !== undefined) {
+                    return onUninitialized()
+                }
+                break
+            case 'loading':
+                if (onLoading !== undefined) {
+                    return onLoading()
+                }
+                break
+            case 'success':
+                if (onSuccess !== undefined) {
+                    return onSuccess(this.data!)
+                }
+                break
+            case 'failure':
+                if (this.error !== undefined && onFailure !== undefined) {
+                    return onFailure(this.error)
+                } else {
+                    throw Error("Invalid state; error should not be undefined")
+                }
+        }
+    }
 
-export function failure<T, E>(error: E): Async<T, E> {
-    return constructInternal<T, E>(error, 'failure')
-}
+    successOrUndefined(): T | undefined {
+        return this.fold(
+            { onSuccess: (data: T) => data }
+        )
+    }
 
-export function loading<T, E>(): Async<T, E> {
-    return constructInternal<T, E>(undefined, 'loading')
-}
+    requireSuccess(): T {
+        const data = this.successOrUndefined()
+        if (data != undefined) {
+            return data
+        } else {
+            throw Error("Async expected to be in 'success' state, but was " + this.state)
+        }
+    }
 
-export function uninitialized<T, E>(): Async<T, E> {
-    return constructInternal<T, E>(undefined, 'uninitialized')
-}
+    static success<T, E>(data: T): Async<T, E> {
+        return new Async<T, E>(data, 'success')
+    }
 
-export interface Async<T, E> { 
-    readonly data: T | undefined
-    readonly error: E | undefined
-    
-    readonly state: AsyncState
+    static failure<T, E>(error: E): Async<T, E> {
+        return new Async<T, E>(error, 'failure')
+    }
 
-    fold<R>(callbacks: SyncFoldCallbacks<T, E, R>): R | undefined
-    successOrUndefined(): T | undefined
-    requireSuccess(): T
+    static loading<T, E>(): Async<T, E> {
+        return new Async<T, E>(undefined, 'loading')
+    }
+
+    static uninitialized<T, E>(): Async<T, E> {
+        return new Async<T, E>(undefined, 'uninitialized')
+    }
 }
 
 export interface SyncFoldCallbacks<T, E, R> {

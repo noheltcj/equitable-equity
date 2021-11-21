@@ -1,5 +1,5 @@
 import React, { Reducer, useEffect, useReducer } from 'react'
-import { Async, uninitialized } from './presentation/utils/Async'
+import { Async } from './presentation/utils/Async'
 import './App.css'
 import { Address } from './model/Address'
 import AppEffectsService from './presentation/AppEffectsService'
@@ -81,9 +81,9 @@ export default function App() {
   const [state, dispatch] = useReducer<Reducer<AppState, AnyAppEvent>, AppState>(
     reducer,
     {
-      ethereum: uninitialized(),
-      networkName: uninitialized(),
-      userAddress: uninitialized()
+      ethereum: Async.uninitialized(),
+      networkName: Async.uninitialized(),
+      userAddress: Async.uninitialized()
     },
     init
   )

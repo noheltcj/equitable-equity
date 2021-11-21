@@ -1,5 +1,5 @@
 import { AppState, OnEthereumNetworkChangedEffectResult, OnEthereumProviderEffectResult, OnUserAddressChangedEffectResult } from "../App"
-import { failure, loading, success, uninitialized } from "./utils/Async";
+import { Async } from "./utils/Async";
 import { MonoEffect, SimpleEffect } from "./utils/Effects";
 
 import detectEthereumProvider from "@metamask/detect-provider";
@@ -14,7 +14,7 @@ export default class AppEffectsService {
 
         dispatchOnlyNewStates({
             type: 'on_ethereum_provider_fetch_effect_result',
-            payload: loading()
+            payload: Async.loading()
         })
 
         // This function detects most providers injected at window.ethereum
@@ -25,12 +25,12 @@ export default class AppEffectsService {
         }).then((result) => {
             dispatchOnlyNewStates({ 
                 type: 'on_ethereum_provider_fetch_effect_result',
-                payload: success(result) 
+                payload: Async.success(result) 
             }) 
         }).catch((error) => {
             dispatchOnlyNewStates({ 
                 type: 'on_ethereum_provider_fetch_effect_result',
-                payload: failure(error) 
+                payload: Async.failure(error) 
             })
         })
     
@@ -38,7 +38,7 @@ export default class AppEffectsService {
             /** Do cleanup of this. */
             dispatchOnlyNewStates({ 
                 type: 'on_ethereum_provider_fetch_effect_result',
-                payload: uninitialized()
+                payload: Async.uninitialized()
             })
         }
     }
@@ -50,7 +50,7 @@ export default class AppEffectsService {
             onSuccess: (ethereumProvider: unknown) => {
                 dispatchOnlyNewStates({
                     type: 'on_ethereum_network_changed_effect_result',
-                    payload: loading()
+                    payload: Async.loading()
                 })
             }
         })
@@ -58,7 +58,7 @@ export default class AppEffectsService {
         return () => {
             dispatchOnlyNewStates({
                 type: 'on_ethereum_network_changed_effect_result',
-                payload: uninitialized()
+                payload: Async.uninitialized()
             })
         }
     }
@@ -70,7 +70,7 @@ export default class AppEffectsService {
             onSuccess: (ethereumProvider: unknown) => {
                 dispatchOnlyNewStates({
                     type: 'on_user_address_changed_effect_result',
-                    payload: loading()
+                    payload: Async.loading()
                 })
             }
         })
@@ -92,7 +92,7 @@ export default class AppEffectsService {
         return () => {
             dispatchOnlyNewStates({
                 type: 'on_user_address_changed_effect_result',
-                payload: uninitialized()
+                payload: Async.uninitialized()
             })
         }
     }
