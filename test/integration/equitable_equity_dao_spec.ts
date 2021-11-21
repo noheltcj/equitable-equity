@@ -101,9 +101,9 @@ describe("EquitableEquityDAO - integration tests", function () {
         try {
           await dao.createProject(
             subsequentProjectName,
+            subsequentTokenName,
             /** From the previous context */
-            fakeTokenName,
-            subsequentTokenSymbol,
+            fakeTokenSymbol,
             subsequentFounderAddress
           );
         } catch (error) {

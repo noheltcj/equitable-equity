@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.10;
 
 import { EquitableEquityDAO } from "../dao/EquitableEquityDAO.sol";
 import { EquitableEquityToken } from "../token/EquitableEquityToken.sol";
@@ -11,8 +11,9 @@ import { ProjectVoteGovernor } from "../governance/ProjectVoteGovernor.sol";
 import { TimelockController } from "@openzeppelin/contracts/governance/TimelockController.sol";
 
 // TODO: Upgradability
-contract EquitableEquityProjectDAO is EquityGovernor, ProjectVoteGovernor {
+contract EquitableEquityProjectDAO is EquityGovernor {
     EquitableEquityToken private equityToken;
+    ProjectVoteGovernor private projectVoteGovernor;
 
     ProjectState private projectState;
 
@@ -21,15 +22,16 @@ contract EquitableEquityProjectDAO is EquityGovernor, ProjectVoteGovernor {
         string memory projectName,
         EquitableEquityToken _equityToken,
         address payable founderAddress
-    ) ProjectVoteGovernor(
-        _equityToken,
-        new TimelockController(
-            5, // Approximately 1 minute in blocks
-            dynamicSingletonArray(address(this)),
-            dynamicSingletonArray(address(0))
-        )
     ) {
         equityToken = _equityToken;
+        projectVoteGovernor = new ProjectVoteGovernor(
+            equityToken,
+            new TimelockController(
+                5, // Approximately 1 minute in blocks
+                dynamicSingletonArray(address(this)),
+                dynamicSingletonArray(address(0))
+            )
+        );
 
         projectState = ProjectState(projectId, projectName, new address payable[](1));
         projectState.participants[0] = founderAddress;
@@ -39,7 +41,7 @@ contract EquitableEquityProjectDAO is EquityGovernor, ProjectVoteGovernor {
         address from,
         address to,
         uint amount
-    ) override(EquityGovernor) public returns (bool) {
+    ) override(EquityGovernor) public pure returns (bool) {
         return true;
     }
 
@@ -48,7 +50,7 @@ contract EquitableEquityProjectDAO is EquityGovernor, ProjectVoteGovernor {
         address from,
         address to,
         uint amount
-    ) override(EquityGovernor) public returns (bool) {
+    ) override(EquityGovernor) public pure returns (bool) {
         return true;
     }
 
