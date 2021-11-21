@@ -3,8 +3,6 @@
 pragma solidity ^0.8.4;
 
 import { EquitableEquityProjectDAO } from "./EquitableEquityProjectDAO.sol";
-import { EquitableEquityERC1155Token } from "../token/EquitableEquityERC1155Token.sol";
-import { EquitableEquityERC20Token } from "../token/EquitableEquityERC20Token.sol";
 import { NetworkGovernor } from "../governance/NetworkGovernor.sol";
 
 contract EquitableEquityDAO is NetworkGovernor {
