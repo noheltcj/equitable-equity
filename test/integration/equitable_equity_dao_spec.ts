@@ -1,14 +1,14 @@
 import { expect } from "chai";
 import { randomUUID } from "crypto";
 import { ethers } from "hardhat";
-import { EquitableEquityDAO } from "../../typechain";
+import { DAO } from "../../typechain";
 import { daoClient } from "./util/clients";
 
-describe("EquitableEquityDAO - integration tests", function () {
-  let dao: EquitableEquityDAO;
+describe("DAO - integration tests", function () {
+  let dao: DAO;
 
   beforeEach(async function () {
-    dao = await daoClient.deploy("fake_content_uri");
+    dao = await daoClient.deploy();
   });
 
   describe("given no projects have been created", function () {
@@ -29,7 +29,7 @@ describe("EquitableEquityDAO - integration tests", function () {
       fakeTokenName = randomUUID();
       fakeTokenSymbol = randomUUID();
       fakeFounderAddress = ethers.Wallet.createRandom().address;
-      fakeInitialGrantAmount = Math.abs(Math.random())
+      fakeInitialGrantAmount = Math.floor(Math.abs(Math.random()) * 1000)
 
       await dao.createProject(
         fakeProjectName,
@@ -58,7 +58,7 @@ describe("EquitableEquityDAO - integration tests", function () {
         subsequentProjectName = randomUUID();
         subsequentTokenName = randomUUID();
         subsequentTokenSymbol = randomUUID();
-        subsequentInitialGrantAmount = Math.abs(Math.random());
+        subsequentInitialGrantAmount = Math.floor(Math.abs(Math.random()) * 1000);
       });
 
       it("should return the newly created project from #listProjects", async function () {

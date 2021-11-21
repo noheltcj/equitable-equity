@@ -10,14 +10,13 @@ contract DAO is NetworkGovernor {
     /** Index by project name (starting at 1; not 0). */
     mapping(string => uint) private projectByNameMapping;
 
-    string private contentUri;
+    /** Index by project name (starting at 1; not 0). */
+    mapping(string => uint) private projectByTokenNameMapping;
+
+    /** Index by project name (starting at 1; not 0). */
+    mapping(string => uint) private projectByTokenSymbolMapping;
 
     ProjectDAO[] private projects;
-
-    /** TODO: Governance vote to update */
-    constructor(string memory initialContentUri) {
-        contentUri = initialContentUri;
-    }
 
     function listProjects() public view returns (ProjectDAO[] memory) {
         return projects;
@@ -36,14 +35,15 @@ contract DAO is NetworkGovernor {
     ) external returns (ProjectDAO) {
 
         /** When there's no element at the specified position, 0 will be returned. */
-        require (projectByNameMapping[projectName] == 0, "Project name already taken");
+        require (projectByNameMapping[projectName] == 0, "dup_1");
+        require (projectByTokenNameMapping[equityTokenName] == 0, "dup_2");
+        require (projectByTokenSymbolMapping[equityTokenSymbol] == 0, "dup_3");
 
         ProjectDAO projectDAO = new ProjectDAO(
             projects.length,
             projectName,
             equityTokenName,
             equityTokenSymbol,
-            contentUri,
             foundingWalletAddress,
             initialGrantAmount,
             this
@@ -53,6 +53,8 @@ contract DAO is NetworkGovernor {
                                             
         uint newProjectIndex = projects.length;
         projectByNameMapping[projectName] = newProjectIndex;
+        projectByTokenNameMapping[equityTokenName] = newProjectIndex;
+        projectByTokenSymbolMapping[equityTokenSymbol] = newProjectIndex;
 
         return projects[newProjectIndex - 1];
     }

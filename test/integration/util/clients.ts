@@ -1,7 +1,7 @@
 import { ethers } from "hardhat";
 import { Contract } from "ethers";
-import { EquitableEquityDAO } from "../../../typechain/EquitableEquityDAO";
-import { EquitableEquityProjectDAO } from "../../../typechain/EquitableEquityProjectDAO";
+import { DAO } from "../../../typechain/DAO";
+import { ProjectDAO } from "../../../typechain/ProjectDAO";
 
 class BlockchainClient {
   constructor() {}
@@ -30,10 +30,8 @@ export class DAOClient {
     this.blockchainClient = blockchainClient;
   }
 
-  async deploy(contentUri: string): Promise<EquitableEquityDAO> {
-    return await blockchainClient.deployContract("EquitableEquityDAO", [
-      contentUri,
-    ]);
+  async deploy(): Promise<DAO> {
+    return await blockchainClient.deployContract("DAO", []);
   }
 }
 
@@ -47,8 +45,8 @@ export class ProjectDAOClient {
   async deploy(
     projectName: string,
     foundingWalletAddress: string
-  ): Promise<EquitableEquityProjectDAO> {
-    return await blockchainClient.deployContract("EquitableEquityProjectDAO", [
+  ): Promise<ProjectDAO> {
+    return await blockchainClient.deployContract("ProjectDAO", [
       projectName,
       foundingWalletAddress,
     ]);
