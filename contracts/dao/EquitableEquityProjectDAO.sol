@@ -7,7 +7,6 @@ import { EquitableEquityERC20Token } from "../token/EquitableEquityERC20Token.so
 import { EquityGovernor } from "../governance/EquityGovernor.sol";
 import { NetworkGovernor } from "../governance/NetworkGovernor.sol";
 import { ProjectVoteGovernor } from "../governance/ProjectVoteGovernor.sol";
-import { TimelockController } from "@openzeppelin/contracts/governance/TimelockController.sol";
 
 contract EquitableEquityProjectDAO is EquityGovernor {
     EquitableEquityERC1155Token internal erc1155Token;
@@ -43,14 +42,7 @@ contract EquitableEquityProjectDAO is EquityGovernor {
             equityTokenSymbol
         );
 
-        projectVoteGovernor = new ProjectVoteGovernor(
-            erc20Token,
-            new TimelockController(
-                5, // Approximately 1 minute in blocks
-                dynamicSingletonArray(address(this)),
-                dynamicSingletonArray(address(0))
-            )
-        );
+        projectVoteGovernor = new ProjectVoteGovernor(erc20Token);
 
         erc20Token.grantEquity(founderAddress, founderGrantAmount);
         erc1155Token.grantFoundingMemberFT(founderAddress);
@@ -76,26 +68,26 @@ contract EquitableEquityProjectDAO is EquityGovernor {
         return true;
     }
 
-    function requestEquityGrant(address payable recipient, uint grantAmount) public {
+    function requestEquityGrant(address payable recipient, uint grantAmount) external {
         erc20Token.grantEquity(recipient, grantAmount);
     }
 
-    function requestFounderStatus(address payable recipient) public {
+    function requestFounderStatus(address payable recipient) external {
         erc1155Token.grantFoundingMemberFT(recipient);
     }
 
-    function getProjectName() public view returns(string memory) {
+    function getProjectName() external view returns(string memory) {
         return projectState.projectName;
     }
 
-    function getParticipants() public view returns(address payable[] memory) {
+    function getParticipants() external view returns(address payable[] memory) {
         return projectState.participants;
     }
 
-    function dynamicSingletonArray(address addr) internal pure returns (address[] memory) {
-        address[] memory dynamicArray = new address[](1);
-        dynamicArray[0] = addr;
-        return dynamicArray;
+    function dynamicArray(address addr) internal pure returns (address[] memory) {
+        address[] memory dArray = new address[](1);
+        dArray[0] = addr;
+        return dArray;
     }
 
     struct ProjectState {
