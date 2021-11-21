@@ -11,3 +11,6 @@ artifacts
 # IntelliJ IDEA
 .idea
 *.iml
+
+# Misc
+.DS_Store
