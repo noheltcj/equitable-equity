@@ -4,16 +4,16 @@ async function main() {
   /** My personal localhost eth address */
   const founderAddress = "0x02EACB83f63333d82a3985313Fd4B2117483f852";
 
-  const EquitableEquityDAO = await ethers.getContractFactory(
-    "EquitableEquityDAO"
+  const DAO = await ethers.getContractFactory(
+    "DAO"
   );
 
-  const EquitableEquityProjectDAO = await ethers.getContractFactory(
-    "EquitableEquityProjectDAO"
+  const ProjectDAO = await ethers.getContractFactory(
+    "ProjectDAO"
   );
 
   /** Will need to be updated with the address of any newly deployed DAOs. */
-  const dao = EquitableEquityDAO.attach("equitable-equity.eth");
+  const dao = DAO.attach("equitable-equity.eth");
 
   const projects = await dao.listProjects();
 
@@ -25,7 +25,7 @@ async function main() {
   const projectAddress = await dao.projectByName(projectName);
 
   console.log("Attaching to new project:", projectAddress);
-  const projectDao = EquitableEquityProjectDAO.attach(projectAddress);
+  const projectDao = ProjectDAO.attach(projectAddress);
 
   console.log("Project organization name:", await projectDao.getProjectName());
   console.log(

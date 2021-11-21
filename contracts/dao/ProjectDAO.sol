@@ -8,12 +8,12 @@ import { NetworkGovernor } from "../governance/NetworkGovernor.sol";
 import { ProjectVoteGovernor } from "../governance/ProjectVoteGovernor.sol";
 
 contract ProjectDAO is EquityGovernor {
-    ERC20Token internal erc20Token;
+    ERC20Token private erc20Token;
 
-    NetworkGovernor internal networkGovernor;
-    ProjectVoteGovernor internal projectVoteGovernor;
+    ProjectVoteGovernor private projectVoteGovernor;
+    NetworkGovernor private networkGovernor;
 
-    ProjectState internal projectState;
+    ProjectState private projectState;
 
     constructor(
         uint projectId,
@@ -40,8 +40,8 @@ contract ProjectDAO is EquityGovernor {
         projectState.participants[0] = founderAddress;
     } 
 
-    function requestEquityGrant(address payable recipient, uint grantAmount) external {
-        erc20Token.grantEquity(recipient, grantAmount);
+    function getERC20Token() external view returns(ERC20Token) {
+        return erc20Token;
     }
 
     function getProjectName() external view returns(string memory) {
@@ -50,6 +50,10 @@ contract ProjectDAO is EquityGovernor {
 
     function getParticipants() external view returns(address payable[] memory) {
         return projectState.participants;
+    }
+
+    function getGovernor() external view returns(ProjectVoteGovernor) {
+        return projectVoteGovernor;
     }
 
     function dynamicArray(address addr) internal pure returns (address[] memory) {
