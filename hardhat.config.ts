@@ -61,7 +61,7 @@ const config: HardhatUserConfig = {
     currency: "USD",
   },
   contractSizer: {
-    alphaSort: true,
+    alphaSort: false,
     disambiguatePaths: true,
     runOnCompile: true,
     strict: true,

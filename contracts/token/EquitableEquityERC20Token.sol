@@ -9,10 +9,10 @@ import { NetworkGovernor } from "../governance/NetworkGovernor.sol";
 
 contract EquitableEquityERC20Token is ERC20, ERC20Votes {
     /** To be replaced with a more abstract system. */
-    uint256 constant private FOUNDING_MEMBER_FT_ID = 0;
+    uint256 constant internal FOUNDING_MEMBER_FT_ID = 0;
 
-    EquityGovernor private equityGovernor;
-    NetworkGovernor private networkGovernor;
+    EquityGovernor internal equityGovernor;
+    NetworkGovernor internal networkGovernor;
 
     /** It's imperative that setEquityGovernor is called immediately after construction. */
     constructor(
@@ -89,11 +89,11 @@ contract EquitableEquityERC20Token is ERC20, ERC20Votes {
         _mint(recipient, amount);
     }
 
-    function requireSentByNetworkGovernor(address operator) private view {
+    function requireSentByNetworkGovernor(address operator) internal view {
         require(operator == address(networkGovernor), "Not authorized");
     }
 
-    function requireSentByEquityGovernor(address operator) private view {
+    function requireSentByEquityGovernor(address operator) internal view {
         require(operator == address(equityGovernor), "Not authorized");
     }
 }

@@ -9,15 +9,14 @@ import { NetworkGovernor } from "../governance/NetworkGovernor.sol";
 import { ProjectVoteGovernor } from "../governance/ProjectVoteGovernor.sol";
 import { TimelockController } from "@openzeppelin/contracts/governance/TimelockController.sol";
 
-// TODO: Upgradability
 contract EquitableEquityProjectDAO is EquityGovernor {
-    EquitableEquityERC1155Token private erc1155Token;
-    EquitableEquityERC20Token private erc20Token;
+    EquitableEquityERC1155Token internal erc1155Token;
+    EquitableEquityERC20Token internal erc20Token;
 
-    NetworkGovernor private networkGovernor;
-    ProjectVoteGovernor private projectVoteGovernor;
+    NetworkGovernor internal networkGovernor;
+    ProjectVoteGovernor internal projectVoteGovernor;
 
-    ProjectState private projectState;
+    ProjectState internal projectState;
 
     constructor(
         uint projectId,
@@ -93,7 +92,7 @@ contract EquitableEquityProjectDAO is EquityGovernor {
         return projectState.participants;
     }
 
-    function dynamicSingletonArray(address addr) private pure returns (address[] memory) {
+    function dynamicSingletonArray(address addr) internal pure returns (address[] memory) {
         address[] memory dynamicArray = new address[](1);
         dynamicArray[0] = addr;
         return dynamicArray;
