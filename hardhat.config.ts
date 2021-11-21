@@ -5,6 +5,7 @@ import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-waffle";
 import "@typechain/hardhat";
 import "hardhat-gas-reporter";
+import "hardhat-contract-sizer";
 import "solidity-coverage";
 
 dotenv.config();
@@ -47,10 +48,23 @@ const config: HardhatUserConfig = {
           ? [process.env.PRIVATE_KEY]
           : "remote",
     },
+    rinkeby: {
+      url: process.env.RINKEBY_URL || "",
+      accounts:
+        process.env.PRIVATE_KEY !== undefined
+          ? [process.env.PRIVATE_KEY]
+          : "remote",
+    },
   },
   gasReporter: {
     enabled: true,
     currency: "USD",
+  },
+  contractSizer: {
+    alphaSort: false,
+    disambiguatePaths: true,
+    runOnCompile: true,
+    strict: true,
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
