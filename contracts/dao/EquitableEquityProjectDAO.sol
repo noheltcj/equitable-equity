@@ -33,10 +33,7 @@ contract EquitableEquityProjectDAO is EquityGovernor, ProjectVoteGovernor {
             dynamicSingletonArray(address(0))
         )
     ) {
-        // TimelockController memory timelockController = new TimelockController();
         equityToken = new EquitableEquityToken(contentUri, this);
-        // voteGovernor = new ProjectVoteGovernor(equityToken, );
-
         state = ProjectState(projectId, projectName, new address payable[](1));
         state.participants[0] = founderAddress;
     }

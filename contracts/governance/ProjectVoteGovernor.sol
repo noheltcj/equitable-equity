@@ -2,11 +2,11 @@
 
 pragma solidity ^0.8.4;
 
-import "@openzeppelin/contracts/governance/Governor.sol";
-import "@openzeppelin/contracts/governance/compatibility/GovernorCompatibilityBravo.sol";
-import "@openzeppelin/contracts/governance/extensions/GovernorVotes.sol";
-import "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol";
-import "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol";
+import { Governor } from "@openzeppelin/contracts/governance/Governor.sol";
+import { GovernorCompatibilityBravo } from "@openzeppelin/contracts/governance/compatibility/GovernorCompatibilityBravo.sol";
+import { GovernorVotes } from "@openzeppelin/contracts/governance/extensions/GovernorVotes.sol";
+import { GovernorVotesQuorumFraction } from "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol";
+import { GovernorTimelockControl, TimelockController } from "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol";
 
 abstract contract ProjectVoteGovernor is Governor, GovernorTimelockControl {
 
