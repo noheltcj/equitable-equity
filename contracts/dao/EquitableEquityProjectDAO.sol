@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 
-pragma solidity ^0.8.4;
+pragma solidity ^0.8.6;
 
 import { EquitableEquityERC1155Token } from "../token/EquitableEquityERC1155Token.sol";
 import { EquitableEquityERC20Token } from "../token/EquitableEquityERC20Token.sol";
